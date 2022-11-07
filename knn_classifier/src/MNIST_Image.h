@@ -17,7 +17,7 @@ public:
 
     // Destructor
     ~MNIST_Image() = default;
-    
+
     // Getters
     uint8_t getLabel() const;  // Get label
     std::array<uint8_t, MNIST_IMAGE_SIZE> getPixels() const;  // Get pixels
