@@ -67,5 +67,16 @@ int main() {
     save_image("images/test_0", test_images.at(0)->getPixels());
 
     // At this point the data is stored in the vectors and the KNN algorithm can start
+
+
+    // Free the memory
+    for (int i = 0; i < mnist.getTrDataCount(); ++i) {
+        delete training_images.at(i);
+    }
+
+    for (int i = 0; i < mnist.getTsDataCount(); ++i) {
+        delete test_images.at(i);
+    }
+
     return 0;
 }
