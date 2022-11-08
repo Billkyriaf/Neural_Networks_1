@@ -175,3 +175,28 @@ void MNIST_Import::printMetadata() {
     std::cout << std::endl;
 }
 
+
+/**
+ * Read the training data and labels from the files
+ */
+void MNIST_Import::readTrainingData(std::vector<MNIST_Image *> &training_images) {
+    // Read the training data
+    for (int i = 0; i < tr_data_count; i++) {
+        auto *image = new MNIST_Image;
+        // Read the image
+        for (int j = 0; j < tr_data_rows; j++) {
+            for (int k = 0; k < tr_data_cols; k++) {
+                unsigned char pixel = 0;
+                tr_data_file.read(reinterpret_cast<char *>(&pixel), sizeof(pixel));
+                image->setPixel(pixel, j * 28 + k);
+            }
+        }
+
+        // Read the label
+        unsigned char label = 0;
+        tr_label_file.read(reinterpret_cast<char *>(&label), sizeof(label));
+        image->setLabel(label);
+
+        training_images.push_back(image);
+    }
+}
