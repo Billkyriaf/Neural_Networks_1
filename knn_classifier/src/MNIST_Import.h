@@ -28,6 +28,7 @@ public:
     void readMetadata();  // Read the metadata of the MNIST dataset
 
     void readTrainingData(std::vector<MNIST_Image *>& training_images);
+    void readTestData(std::vector<MNIST_Image *>& test_images);
 
 
 private:
