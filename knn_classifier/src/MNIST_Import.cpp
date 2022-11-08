@@ -4,6 +4,7 @@
 #include <iostream>
 #include <endian.h>
 
+// ------------- Constructors ------------- //
 /**
  * Constructor with path to MNIST dataset files
  *
@@ -42,6 +43,27 @@ MNIST_Import::~MNIST_Import() {
 }
 
 
+// ------------- Getters ------------- //
+/**
+ * Get the number of images in the training data file
+ *
+ * @return  Number of images in the training data file
+ */
+uint32_t MNIST_Import::getTrDataCount() const {
+    return tr_data_count;
+}
+
+/**
+ * Get the number of images in the test data file
+ *
+ * @return  Number of images in the test data file
+ */
+uint32_t MNIST_Import::getTsDataCount() const {
+    return ts_data_count;
+}
+
+
+// ------------- Member functions ------------- //
 /**
  * Open a binary file for reading
  *
@@ -58,6 +80,10 @@ void MNIST_Import::openFile(const std::string &path, std::ifstream &stream) {
     }
 }
 
+
+/**
+ * Read the metadata from the MNIST dataset files
+ */
 void MNIST_Import::readMetadata() {
 
     openFile(tr_data_path, tr_data_file);  // Open the training data file
@@ -149,7 +175,11 @@ void MNIST_Import::readMetadata() {
     }
 }
 
-void MNIST_Import::printMetadata() {
+
+/**
+ * Print the metadata to the console
+ */
+void MNIST_Import::printMetadata() const {
     std::cout << "Training data:" << std::endl;
     std::cout << "Magic number: " << tr_data_magic_number << std::endl;
     std::cout << "Number of images: " << tr_data_count << std::endl;

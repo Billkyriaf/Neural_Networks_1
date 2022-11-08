@@ -9,9 +9,8 @@
 class MNIST_Import {
 public:
     // Constructors
-    MNIST_Import() = default;  // Default constructor
+    MNIST_Import() = default;
 
-    // Constructor with path to MNIST dataset files
     explicit MNIST_Import(std::string tr_data_p,
                           std::string tr_label_p,
                           std::string test_data_p,
@@ -21,14 +20,20 @@ public:
     ~MNIST_Import();
 
     // Getters
+    uint32_t getTrDataCount() const;
+    uint32_t getTsDataCount() const;
 
     // Setters
 
     // Functions
-    void readMetadata();  // Read the metadata of the MNIST dataset
+    void readMetadata();
 
     void readTrainingData(std::vector<MNIST_Image *>& training_images);
     void readTestData(std::vector<MNIST_Image *>& test_images);
+
+    void printMetadata() const;
+
+
 
 
 private:
@@ -62,8 +67,6 @@ private:
     uint32_t ts_label_count {0};         // Number of labels in the test labels file
     uint32_t ts_data_rows {0};           // Number of rows in the test data file
     uint32_t ts_data_cols {0};           // Number of columns in the test data file
-
 };
-
 
 #endif
