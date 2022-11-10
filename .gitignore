@@ -1,2 +1,4 @@
 test_code/**
 dataset/**
+
+knn_classifier/valgrind_log
