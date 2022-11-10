@@ -2,10 +2,10 @@
 #include <cmath>
 #include <cstring>
 
-#include "MNIST_Import.h"
-#include "KNN.h"
-#include "Timer.h"
-#include "Print_Progress.h"
+#include "mnist/MNIST_Import.h"
+#include "knn/KNN.h"
+#include "utils/Timer.h"
+#include "utils/Print_Progress.h"
 
 
 /**

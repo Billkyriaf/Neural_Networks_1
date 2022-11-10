@@ -4,7 +4,7 @@
 
 #include <cstdint>
 #include <vector>
-#include "MNIST_Image.h"
+#include "../mnist/MNIST_Image.h"
 
 
 class KNN {
