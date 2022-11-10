@@ -2,38 +2,31 @@
 #include <cmath>
 
 #include "MNIST_Import.h"
+#include "KNN.h"
 
+#define CLASS_THREADS 16
 
-void save_image(const ::std::string &name, std::array<uint8_t, 28 * 28> image){
-    using ::std::string;
-    using ::std::ios;
-    using ::std::ofstream;
+typedef struct {
+    int thread_id;   // The thread ID
+    int start;       // The index of the first image to process
+    int end;         // The index of the last image to process
 
-    auto as_pgm = [](const string &name) -> string {
-        if (! ((name.length() >= 4)
-               && (name.substr(name.length() - 4, 4) == ".pgm")))
-        {
-            return name + ".pgm";
-        } else {
-            return name;
+    KNN *knn;        // The KNN object
+} thread_data;
+
+void *classify(void *arg) {
+    auto *data = (thread_data *) arg;
+
+    for (int i = data->start; i < data->end; i++) {
+        data->knn->classifyImage(i, false);
+
+        if (i % 100 == 0 && data->thread_id == 0 && i != 0) {
+            std::cout << "Every thread classified approximately " << i << " images" << std::endl;
         }
-    };
-
-    ofstream out(as_pgm(name), ios::binary | ios::out | ios::trunc);
-
-    out << "P2\n28 28\n255\n";
-    for (int x = 0; x < 28; ++x) {
-        for (int y = 0; y < 28; ++y) {
-            auto pixel_val = (unsigned char)image[x * 28 + y];
-            out << (unsigned int)pixel_val;
-            out << " ";
-        }
-        out << "\n";
     }
 
-    out.close();
+    return nullptr;
 }
-
 
 int main() {
     MNIST_Import mnist(
@@ -66,8 +59,35 @@ int main() {
     std::cout << "Saving test image as 'test_1.pgm'... Label: " << (int)test_images.at(0)->getLabel() << std::endl;
     save_image("images/test_0", test_images.at(0)->getPixels());
 
-    // At this point the data is stored in the vectors and the KNN algorithm can start
+    // Create a KNN classifiers
+    std::vector<KNN *> classifiers;
+    classifiers.reserve(CLASS_THREADS);
 
+    for (int i = 0; i < CLASS_THREADS; i++) {
+        classifiers.push_back(new KNN(3, training_images, test_images));
+    }
+
+    // Create the threads
+    pthread_t threads[CLASS_THREADS];
+    thread_data data[CLASS_THREADS];
+
+    for (int i = 0; i < CLASS_THREADS; i++) {
+        data[i].thread_id = i;
+        data[i].start = i * int(test_images.size() / CLASS_THREADS);
+        data[i].end = (i + 1) * int(test_images.size() / CLASS_THREADS);
+        data[i].knn = classifiers.at(i);
+
+        pthread_create(&threads[i], nullptr, classify, &data[i]);
+    }
+
+    // Wait for the threads to finish
+    for (unsigned long thread : threads) {
+        pthread_join(thread, nullptr);
+    }
+
+
+    classifiers.at(0)->accumulateStats(classifiers);
+    classifiers.at(0)->printStats();
 
     // Free the memory
     for (int i = 0; i < mnist.getTrDataCount(); ++i) {
