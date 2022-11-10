@@ -3,6 +3,7 @@
 
 #include "MNIST_Import.h"
 #include "KNN.h"
+#include "Timer.h"
 
 #define CLASS_THREADS 16
 
@@ -29,6 +30,9 @@ void *classify(void *arg) {
 }
 
 int main() {
+    Timer timer;
+    timer.startTimer();
+
     MNIST_Import mnist(
             "data/train-images.idx3-ubyte",
             "data/train-labels.idx1-ubyte",
@@ -51,13 +55,22 @@ int main() {
 
     mnist.readTestData(test_images);  // Read the test data
 
+    timer.stopTimer();
+    std::cout << "Time to read the data: ";
+    timer.displayElapsed();
+
     // Save the first image from the training set and the first image from the test set as pgm files to confirm that
     // the data was read correctly
     std::cout << "Saving training image as 'train_0.pgm'... Label: " << (int)training_images.at(0)->getLabel() << std::endl;
-    save_image("images/train_0", training_images.at(0)->getPixels());
+    training_images.at(0)->saveImage("images/train_0");
 
     std::cout << "Saving test image as 'test_1.pgm'... Label: " << (int)test_images.at(0)->getLabel() << std::endl;
-    save_image("images/test_0", test_images.at(0)->getPixels());
+    test_images.at(0)->saveImage("images/test_0");
+
+    std::cout << std::endl;
+    std::cout << std::endl;
+
+    timer.startTimer();
 
     // Create a KNN classifiers
     std::vector<KNN *> classifiers;
@@ -85,6 +98,9 @@ int main() {
         pthread_join(thread, nullptr);
     }
 
+    timer.stopTimer();
+    std::cout << std::endl << std::endl  << "Time to classify all the test images: ";
+    timer.displayElapsed();
 
     classifiers.at(0)->accumulateStats(classifiers);
     classifiers.at(0)->printStats();
