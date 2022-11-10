@@ -1,5 +1,6 @@
 #include "MNIST_Image.h"
 #include <cmath>
+#include <fstream>
 
 // ------------- Constructors ------------- //
 /**
@@ -8,6 +9,17 @@
  * @param label   The label of the image
  */
 MNIST_Image::MNIST_Image(uint8_t label) : label(label) {}
+
+/**
+ * Copy constructor
+ *
+ * @param other  The image to copy
+ */
+MNIST_Image::MNIST_Image(const MNIST_Image &other) {
+    label = other.label;
+    distance = other.distance;
+    pixels = other.pixels;
+}
 
 /**
  * Constructor with label and pixels
@@ -96,12 +108,12 @@ void MNIST_Image::setPixels(std::array<uint8_t, MNIST_IMAGE_SIZE> p) {
  * @param image   The image to calculate the distance to
  * @return        The distance between this image and the other image
  */
-double MNIST_Image::calculateDistance(const MNIST_Image &train_image){
+double MNIST_Image::calculateDistance(const MNIST_Image &test_image){
     MNIST_Image::distance = 0;
 
     // Sum the squared differences between the pixels
     for (int i = 0; i < MNIST_IMAGE_SIZE; i++) {
-        MNIST_Image::distance += std::pow(MNIST_Image::pixels[i] - train_image.pixels[i], 2);
+        MNIST_Image::distance += std::pow(MNIST_Image::pixels[i] - test_image.pixels[i], 2);
     }
 
     return MNIST_Image::distance;
@@ -117,3 +129,46 @@ double MNIST_Image::calculateDistance(const MNIST_Image &train_image){
 bool MNIST_Image::isLabel(uint8_t l) const {
     return MNIST_Image::label == l;
 }
+
+
+/**
+ * Save the image to a pgm file
+ *
+ * @param name   The name of the file to save the image to
+ */
+void MNIST_Image::saveImage(const std::string &name) const{
+    using ::std::string;
+    using ::std::ios;
+    using ::std::ofstream;
+
+    // lambda function to create the file name
+    auto as_pgm = [](const string &name) -> string {
+        if (! ((name.length() >= 4)
+               && (name.substr(name.length() - 4, 4) == ".pgm")))
+        {
+            return name + ".pgm";
+        } else {
+            return name;
+        }
+    };
+
+    // Open the file for writing in binary mode
+    ofstream out(as_pgm(name), ios::binary | ios::out | ios::trunc);
+
+    // Write the header
+    out << "P2\n28 28\n255\n";
+
+    // Write the pixels
+    for (int x = 0; x < 28; ++x) {
+        for (int y = 0; y < 28; ++y) {
+            auto pixel_val = (unsigned char)pixels[x * 28 + y];
+            out << (unsigned int)pixel_val;
+            out << " ";
+        }
+        out << "\n";
+    }
+
+    // Close the file
+    out.close();
+}
+

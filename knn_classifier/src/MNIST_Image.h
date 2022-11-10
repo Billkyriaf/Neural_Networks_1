@@ -15,6 +15,7 @@ public:
     explicit MNIST_Image(uint8_t label, std::array<uint8_t, MNIST_IMAGE_SIZE> pixels);
 
     // Copy constructors
+    MNIST_Image(const MNIST_Image &other);
 
     // Destructor
     ~MNIST_Image() = default;
@@ -31,7 +32,8 @@ public:
     void setPixels(std::array<uint8_t, MNIST_IMAGE_SIZE> pixels);
 
     // Functions
-    double calculateDistance(const MNIST_Image &train_image);
+    void saveImage(const ::std::string &name) const;
+    double calculateDistance(const MNIST_Image &test_image);
     bool isLabel(uint8_t l) const;
 
 private:
