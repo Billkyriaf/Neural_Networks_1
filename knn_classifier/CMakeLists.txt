@@ -6,4 +6,9 @@ set(CMAKE_CXX_STANDARD 14)
 # Set -O3 optimization flag
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
-add_executable(knn_classifier src/main.cpp src/MNIST_Image.cpp src/MNIST_Image.h src/MNIST_Import.cpp src/MNIST_Import.h src/KNN.cpp src/KNN.h src/Timer.cpp src/Timer.h)
+add_executable(knn_classifier src/KNN_main.cpp src/mnist/MNIST_Image.cpp src/mnist/MNIST_Image.h
+        src/mnist/MNIST_Import.cpp src/mnist/MNIST_Import.h src/knn/KNN.cpp src/knn/KNN.h src/utils/Timer.cpp
+        src/utils/Timer.h src/utils/Print_Progress.cpp src/utils/Print_Progress.h)
+
+add_executable(ncc_classifier src/NCC_main.cpp src/ncm/NCC.cpp src/ncm/NCC.h src/mnist/MNIST_Image.cpp
+        src/mnist/MNIST_Image.h src/mnist/MNIST_Import.cpp src/mnist/MNIST_Import.h src/utils/Timer.cpp src/utils/Timer.h)
