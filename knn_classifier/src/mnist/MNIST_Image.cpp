@@ -11,23 +11,23 @@
 MNIST_Image::MNIST_Image(uint8_t label) : label(label) {}
 
 /**
- * Copy constructor
- *
- * @param other  The image to copy
- */
-MNIST_Image::MNIST_Image(const MNIST_Image &other) {
-    label = other.label;
-    distance = other.distance;
-    pixels = other.pixels;
-}
-
-/**
  * Constructor with label and pixels
  *
  * @param label   The label of the image
  * @param pixels  The pixels of the image flattened into a 1D array
  */
-MNIST_Image::MNIST_Image(uint8_t label, const std::array<uint8_t, 28 * 28> pixels) : label(label), pixels(pixels) {}
+MNIST_Image::MNIST_Image(uint8_t label, const std::array<uint8_t, MNIST_IMAGE_SIZE> pixels) : label(label), pixels(pixels) {}
+
+/**
+ * Copy constructor
+ *
+ * @param other  The image to copy
+ */
+MNIST_Image::MNIST_Image(const MNIST_Image &other) {
+    MNIST_Image::label = other.label;
+    MNIST_Image::distance = other.distance;
+    MNIST_Image::pixels = other.pixels;
+}
 
 
 // ------------- Getters ------------- //
@@ -47,6 +47,16 @@ uint8_t MNIST_Image::getLabel() const {
  */
 double MNIST_Image::getDistance() const {
     return MNIST_Image::distance;
+}
+
+/**
+ * Get the pixel at the given index
+ *
+ * @param index  The index of the pixel
+ * @return The pixel at the given index
+ */
+uint8_t MNIST_Image::getPixel(int index) const {
+    return MNIST_Image::pixels.at(index);
 }
 
 /**
@@ -79,7 +89,7 @@ void MNIST_Image::setDistance(double d) {
 }
 
 /**
- * Set a pixel of the image
+ * Set a pixel of the image. This will also update the normalized pixel at the same index
  *
  * @param pixel   The pixel to set
  * @param index   The index of the pixel to set
@@ -89,7 +99,7 @@ void MNIST_Image::setPixel(uint8_t pixel, uint32_t index) {
 }
 
 /**
- * Set the pixels of the image
+ * Set the pixels of the image. This will also update the normalized pixels
  *
  * @param pixels   The pixels of the image
  */
@@ -99,38 +109,6 @@ void MNIST_Image::setPixels(std::array<uint8_t, MNIST_IMAGE_SIZE> p) {
 
 
 // ------------- Member functions ------------- //
-/**
- * Calculate the distance between this image and another image. The distance is calculated using the Euclidean distance.
- * For performance reasons, the final square root is not calculated. The square root is a strictly increasing function.
- * If d1 > d2, then sqrt(d1) > sqrt(d2),so since we only want to compare the distances, we can safely ignore the square
- * root.
- *
- * @param image   The image to calculate the distance to
- * @return        The distance between this image and the other image
- */
-double MNIST_Image::calculateDistance(const MNIST_Image &test_image){
-    MNIST_Image::distance = 0;
-
-    // Sum the squared differences between the pixels
-    for (int i = 0; i < MNIST_IMAGE_SIZE; i++) {
-        MNIST_Image::distance += std::pow(MNIST_Image::pixels[i] - test_image.pixels[i], 2);
-    }
-
-    return MNIST_Image::distance;
-}
-
-
-/**
- * Check if the label of this image is the same as the given label
- *
- * @param l   The label to check
- * @return    True if the label of this image is the same as the given label, false otherwise
- */
-bool MNIST_Image::isLabel(uint8_t l) const {
-    return MNIST_Image::label == l;
-}
-
-
 /**
  * Save the image to a pgm file
  *
@@ -172,3 +150,32 @@ void MNIST_Image::saveImage(const std::string &name) const{
     out.close();
 }
 
+/**
+ * Check if the label of this image is the same as the given label
+ *
+ * @param l   The label to check
+ * @return    True if the label of this image is the same as the given label, false otherwise
+ */
+bool MNIST_Image::isLabel(uint8_t l) const {
+    return MNIST_Image::label == l;
+}
+
+/**
+ * Calculate the distance between this image and another image. The distance is calculated using the Euclidean distance.
+ * For performance reasons, the final square root is not calculated. The square root is a strictly increasing function.
+ * If d1 > d2, then sqrt(d1) > sqrt(d2),so since we only want to compare the distances, we can safely ignore the square
+ * root.
+ *
+ * @param image   The image to calculate the distance to
+ * @return        The distance between this image and the other image
+ */
+double MNIST_Image::calculateDistance(const MNIST_Image &test_image){
+    MNIST_Image::distance = 0;
+
+    // Sum the squared differences between the pixels
+    for (int i = 0; i < MNIST_IMAGE_SIZE; i++) {
+        MNIST_Image::distance += std::pow(MNIST_Image::pixels[i] - test_image.pixels[i], 2);
+    }
+
+    return MNIST_Image::distance;
+}

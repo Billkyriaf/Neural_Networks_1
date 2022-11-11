@@ -60,6 +60,71 @@ void *classify(void *arg) {
     pthread_exit(nullptr);
 }
 
+void classifyImages(int n_threads, int k, int n_tests, int start_index, const std::vector<MNIST_Image *> &training_images,
+                    const std::vector<MNIST_Image *> &test_images) {
+
+    std::vector<KNN *> classifiers;  // Create a KNN classifiers
+    classifiers.reserve(n_threads);
+
+    for (int i = 0; i < n_threads; i++) {
+        classifiers.push_back(new KNN(k, training_images, test_images));
+    }
+
+    // Create the threads. Every classifier will be run in a separate thread and will classify a part of the test images
+    pthread_t threads[n_threads];
+    thread_data data[n_threads];
+
+    // The mutex is used to lock the progress bar
+    auto *mutex = new pthread_mutex_t;
+    pthread_mutex_init(mutex, nullptr);
+
+    // The progress bar object
+    auto *progress = new Print_Progress(n_threads, int(n_tests / n_threads));
+
+    // Create the threads
+    for (int i = 0; i < n_threads - 1; i++) {
+        data[i].thread_id = i;
+        data[i].start = i * int(n_tests / n_threads) + start_index;
+        data[i].end = (i + 1) * int(n_tests / n_threads) + start_index;
+        data[i].knn = classifiers.at(i);
+        data[i].progress = progress;
+        data[i].mutex = mutex;
+
+        pthread_create(&threads[i], nullptr, classify, &data[i]);
+    }
+
+    // The last thread will classify the remaining images
+    if (n_threads >= 1) {
+        data[n_threads - 1].thread_id = n_threads - 1;
+        data[n_threads - 1].start = (n_threads - 1) * int(n_tests / n_threads) + start_index;
+        data[n_threads - 1].end = n_tests + start_index;
+        data[n_threads - 1].knn = classifiers.at(n_threads - 1);
+        data[n_threads - 1].progress = progress;
+        data[n_threads - 1].mutex = mutex;
+
+        pthread_create(&threads[n_threads - 1], nullptr, classify, &data[n_threads - 1]);
+    }
+
+    // Wait for the threads to finish
+    for (unsigned long thread : threads) {
+        pthread_join(thread, nullptr);
+    }
+
+    // Print the results
+    classifiers.at(0)->accumulateStats(classifiers);
+    classifiers.at(0)->printStats();
+
+    // Delete the classifiers
+    for (auto &classifier : classifiers) {
+        delete classifier;
+    }
+
+    // Free memory
+    pthread_mutex_destroy(mutex);
+    delete(progress);
+    delete(mutex);
+}
+
 /**
  * Main function classifies the test images using the KNN algorithm. The arguments are:
  *   - The path to the dataset directory. The directory should contain the files:
@@ -201,60 +266,11 @@ int main(int argc, char *argv[]) {
     // Start the classification process
     timer.startTimer();
 
-
-    std::vector<KNN *> classifiers;  // Create a KNN classifiers
-    classifiers.reserve(n_threads);
-
-    for (int i = 0; i < n_threads; i++) {
-        classifiers.push_back(new KNN(k, training_images, test_images));
-    }
-
-    // Create the threads. Every classifier will be run in a separate thread and will classify a part of the test images
-    pthread_t threads[n_threads];
-    thread_data data[n_threads];
-
-    // The mutex is used to lock the progress bar
-    auto *mutex = new pthread_mutex_t;
-    pthread_mutex_init(mutex, nullptr);
-
-    // The progress bar object
-    auto *progress = new Print_Progress(n_threads, int(n_tests / n_threads));
-
-    // Create the threads
-    for (int i = 0; i < n_threads - 1; i++) {
-        data[i].thread_id = i;
-        data[i].start = i * int(n_tests / n_threads) + start_index;
-        data[i].end = (i + 1) * int(n_tests / n_threads) + start_index;
-        data[i].knn = classifiers.at(i);
-        data[i].progress = progress;
-        data[i].mutex = mutex;
-
-        pthread_create(&threads[i], nullptr, classify, &data[i]);
-    }
-
-    // The last thread will classify the remaining images
-    if (n_threads >= 1) {
-        data[n_threads - 1].thread_id = n_threads - 1;
-        data[n_threads - 1].start = (n_threads - 1) * int(n_tests / n_threads) + start_index;
-        data[n_threads - 1].end = n_tests + start_index;
-        data[n_threads - 1].knn = classifiers.at(n_threads - 1);
-        data[n_threads - 1].progress = progress;
-        data[n_threads - 1].mutex = mutex;
-
-        pthread_create(&threads[n_threads - 1], nullptr, classify, &data[n_threads - 1]);
-    }
-
-    // Wait for the threads to finish
-    for (unsigned long thread : threads) {
-        pthread_join(thread, nullptr);
-    }
+    classifyImages(n_threads, k, n_tests, start_index, training_images, test_images);
 
     timer.stopTimer();
     std::cout << std::endl << std::endl  << "Time to classify all the test images: ";
     timer.displayElapsed();
-
-    classifiers.at(0)->accumulateStats(classifiers);
-    classifiers.at(0)->printStats();
 
     // Free the memory
     for (uint32_t i = 0; i < mnist.getTrDataCount(); ++i) {
@@ -264,10 +280,6 @@ int main(int argc, char *argv[]) {
     for (uint32_t i = 0; i < mnist.getTsDataCount(); ++i) {
         delete test_images.at(i);
     }
-
-    pthread_mutex_destroy(mutex);
-    delete(progress);
-    delete(mutex);
 
     return 0;
 }

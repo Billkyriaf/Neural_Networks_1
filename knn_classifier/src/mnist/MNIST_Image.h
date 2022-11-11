@@ -23,6 +23,7 @@ public:
     // Getters
     uint8_t getLabel() const;
     double getDistance() const;
+    uint8_t getPixel(int index) const;
     std::array<uint8_t, MNIST_IMAGE_SIZE> getPixels() const;
 
     // Setters
@@ -33,14 +34,16 @@ public:
 
     // Functions
     void saveImage(const ::std::string &name) const;
-    double calculateDistance(const MNIST_Image &test_image);
     bool isLabel(uint8_t l) const;
+    double calculateDistance(const MNIST_Image &test_image);
+
 
 private:
+    // Variables
     uint8_t label {0};                                   /// The label of the image
     double distance {0};                                 /// The distance between this image and another image
-    std::array<uint8_t, MNIST_IMAGE_SIZE> pixels {};     /// The pixels of the image flattened into a 1D array
 
+    std::array<uint8_t, MNIST_IMAGE_SIZE> pixels{};      /// The pixels of the image flattened into a 1D array
 };
 
 

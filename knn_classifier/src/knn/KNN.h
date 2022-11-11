@@ -11,8 +11,9 @@ class KNN {
 public:
     // Constructors
     KNN() = default;
-
     KNN(int k, const std::vector<MNIST_Image *>& training_images, const std::vector<MNIST_Image *>& test_images);
+
+    // Copy constructors
 
     // Destructor
     ~KNN();
@@ -24,9 +25,11 @@ public:
     void incrementIncorrect();
 
     // Functions
-    bool classifyImage(int test_index, bool verbose = false);
+    int classifyImage(int test_index, bool verbose = false);
     void printStats();
     void accumulateStats(const std::vector<KNN *>& knn_classifiers);
+
+    // Friend functions
     friend void * calculateDistancesThread(void *arg);
 
 
