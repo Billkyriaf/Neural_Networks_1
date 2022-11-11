@@ -3,6 +3,14 @@
 
 #define MEAN_THREADS 16
 
+// -------------- Constructors -------------- //
+
+/**
+ * Class constructor
+ *
+ * @param training_images   The training images
+ * @param test_images       The test images
+ */
 NCC::NCC(const std::vector<MNIST_Image *> &training_images, const std::vector<MNIST_Image *> &test_images) {
     this->n_tests = 0;
     this->n_correct = 0;
@@ -34,6 +42,14 @@ NCC::NCC(const std::vector<MNIST_Image *> &training_images, const std::vector<MN
     this->class_counts.fill(0);
 }
 
+/**
+ * Class constructor
+ *
+ * @param training_images   The training images
+ * @param test_images       The test images
+ * @param means             The means of each class
+ * @param counts            The number of images in each class
+ */
 NCC::NCC(const std::vector<MNIST_Image *>& training_images, const std::vector<MNIST_Image *>& test_images,
          const std::array<MNIST_Image *, 10>& means, std::array<int, 10> counts) {
     this->n_tests = 0;
@@ -67,6 +83,9 @@ NCC::NCC(const std::vector<MNIST_Image *>& training_images, const std::vector<MN
     this->class_counts = counts;
 }
 
+/**
+ * Class destructor
+ */
 NCC::~NCC() {
     // Free the memory
     for (auto & training_image : training_images) {
@@ -82,16 +101,40 @@ NCC::~NCC() {
     }
 }
 
+
+// -------------- Getters -------------- //
+/**
+ * Get the mean array of all the classes
+ * @return  The mean array
+ */
+std::array<MNIST_Image *, 10> NCC::getClassMeans() const {
+    return class_means;
+}
+
+
+// -------------- Setters -------------- //
+
+/**
+ * Increment the number of correct classifications
+ */
 void NCC::incrementCorrect() {
     n_correct++;
     n_tests++;
 }
 
+/**
+ * Increment the number of incorrect classifications
+ */
 void NCC::incrementIncorrect() {
     n_incorrect++;
     n_tests++;
 }
 
+// -------------- Methods -------------- //
+
+/**
+ * Structure for passing arguments to the mean thread
+ */
 typedef struct {
     int start;  // The index of the first image to process
     int end;  // The index of the last image to process
@@ -103,16 +146,21 @@ typedef struct {
 } Thread_args;
 
 
+/**
+ * Thread function for calculating the means
+ *
+ * @param args  The arguments
+ * @return      nullptr
+ */
 void *calculateMeansThread(void *args) {
     auto *thread_args = (Thread_args *) args;
 
+    // Calculate the means from start to end
     for (int i = thread_args->start; i < thread_args->end; i++) {
-        int label = thread_args->ncm->training_images[i]->getLabel();
+        int label = thread_args->ncm->training_images[i]->getLabel();  // The label of the image
+        thread_args->counts->at(label)++;  // update the count
 
-        // update the count
-        thread_args->counts->at(label)++;
-
-        // update the mean
+        // Add the image to the mean
         for (int j = 0; j < MNIST_IMAGE_SIZE; j++) {
             thread_args->means->at(label)[j] += thread_args->ncm->training_images[i]->getPixel(j);
         }
@@ -121,11 +169,15 @@ void *calculateMeansThread(void *args) {
     return nullptr;
 }
 
+/**
+ * Calculate the means of each class
+ */
 void NCC::calculateMeans() {
 
-    std::vector<std::vector<int>> thread_counts;
-    thread_counts.reserve(MEAN_THREADS);
+    std::vector<std::vector<int>> thread_counts;  // The counts of each class for each thread
+    thread_counts.reserve(MEAN_THREADS);  // Reserve space for the threads
 
+    // Initialize the counts to 0
     for (int i = 0; i < MEAN_THREADS; i++) {
         std::vector<int> thread_count;
         thread_count.reserve(10);
@@ -137,9 +189,14 @@ void NCC::calculateMeans() {
         thread_counts.push_back(thread_count);
     }
 
-    std::vector<std::vector<std::vector<int>>> thread_means;
-    thread_means.reserve(MEAN_THREADS);
+    /*
+     * Initialize the means to 0. Every thread has its own copy of the means. Each mean is a vector of size
+     * (10, MNIST_IMAGE_SIZE). The first dimension is the class and the second dimension is the pixel.
+     */
+    std::vector<std::vector<std::vector<int>>> thread_means;  // The mean vectors of each class for each thread
+    thread_means.reserve(MEAN_THREADS);  // Reserve space for the threads
 
+    // Initialize the means to 0
     for (int i = 0; i < MEAN_THREADS; i++) {
         std::vector<std::vector<int>> thread_mean;
         thread_mean.reserve(10);
@@ -158,16 +215,16 @@ void NCC::calculateMeans() {
         thread_means.push_back(thread_mean);
     }
 
-    typedef void * (*thread_function_ptr)(void *);
+    typedef void * (*thread_function_ptr)(void *);  // The type of the thread function
 
-    pthread_attr_t pthread_custom_attr;
-    pthread_attr_init(&pthread_custom_attr);
+    pthread_attr_t pthread_custom_attr;  // The attributes of the threads
+    pthread_attr_init(&pthread_custom_attr);  // Initialize the attributes
 
-    std::array<Thread_args, MEAN_THREADS> thread_args{};
-    std::array<pthread_t, MEAN_THREADS> threads{};
+    std::array<Thread_args, MEAN_THREADS> thread_args{};  // The arguments for each thread
+    std::array<pthread_t, MEAN_THREADS> threads{};  // The threads
 
-    int n_images = int(training_images.size());
-    int n_images_per_thread = n_images / MEAN_THREADS;
+    int n_images = int(training_images.size());  // The number of images
+    int n_images_per_thread = n_images / MEAN_THREADS;  // The number of images each thread will process
 
     // Create the threads
     for (int i = 0; i < MEAN_THREADS; i++) {
@@ -212,7 +269,15 @@ void NCC::calculateMeans() {
     pthread_attr_destroy(&pthread_custom_attr);
 }
 
-void NCC::classifyImage(int test_index, bool verbose) {
+
+/**
+ * Classify the image with test_index
+ * @param test_index  The index of the image to classify
+ * @param verbose     Whether to print the results
+ *
+ * @return  The predicted label of the image
+ */
+int NCC::classifyImage(int test_index, bool verbose) {
     std::array<double, 10> class_distances{};  // The distance from the test image to each class mean image
 
     // Calculate the distance from the test image to the class mean images
@@ -249,15 +314,20 @@ void NCC::classifyImage(int test_index, bool verbose) {
         }
 
     } else {
-        if (test_images.at(test_index)->isLabel(min_label)) {
-            std::cout << "Test image " << test_index << " classified correctly as " << min_label << std::endl;
-        } else {
-            std::cout << "Test image " << test_index << " classified incorrectly as " << min_label << ". It was "
-            << int(test_images.at(test_index)->getLabel()) <<std::endl;
-        }
+//        if (test_images.at(test_index)->isLabel(min_label)) {
+//            std::cout << "Test image " << test_index << " classified correctly as " << min_label << std::endl;
+//        } else {
+//            std::cout << "Test image " << test_index << " classified incorrectly as " << min_label << ". It was "
+//            << int(test_images.at(test_index)->getLabel()) <<std::endl;
+//        }
     }
+
+    return min_label;
 }
 
+/**
+ * Print the stats
+ */
 void NCC::printStats() {
     calculateAccuracy();  // Calculate the accuracy
 
@@ -271,12 +341,11 @@ void NCC::printStats() {
     std::cout << "Accuracy: " << std::fixed << accuracy << "%" << std::endl;
 }
 
+/**
+ * Calculate the accuracy
+ */
 void NCC::calculateAccuracy() {
     accuracy = (double(n_correct) / double(n_tests)) * 100;
-}
-
-std::array<MNIST_Image *, 10> NCC::getClassMeans() const {
-    return class_means;
 }
 
 

@@ -11,9 +11,9 @@ class NCC {
 public:
     // Constructors
     NCC() = delete;
-
     NCC(const std::vector<MNIST_Image *>& training_images, const std::vector<MNIST_Image *>& test_images);
-    NCC(const std::vector<MNIST_Image *>& training_images, const std::vector<MNIST_Image *>& test_images, const std::array<MNIST_Image *, 10>& means, std::array<int, 10> counts);
+    NCC(const std::vector<MNIST_Image *>& training_images, const std::vector<MNIST_Image *>& test_images,
+        const std::array<MNIST_Image *, 10>& means, std::array<int, 10> counts);
 
     // Destructor
     ~NCC();
@@ -27,11 +27,14 @@ public:
 
     // Functions
     void calculateMeans();
-    void classifyImage(int test_index, bool verbose = false);
+    int classifyImage(int test_index, bool verbose = false);
     void printStats();
+
+    // Friend functions
     friend void * calculateMeansThread(void *arg);
 
 private:
+    // Variables
     std::array<MNIST_Image *, 10> class_means{};  /// The mean vector of each class
     std::array<int, 10> class_counts {};          /// The number of images in each class
 
