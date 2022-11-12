@@ -38,9 +38,13 @@ private:
     std::array<MNIST_Image *, 10> class_means{};  /// The mean vector of each class
     std::array<int, 10> class_counts {};          /// The number of images in each class
 
+    std::vector<MNIST_Image *> cluster_means{};          /// The mean vector of each cluster
+    std::vector<std::vector<MNIST_Image *>> clusters{};  /// The clusters of images
+
     std::vector<MNIST_Image *> training_images;   /// The training images
     std::vector<MNIST_Image *> test_images;       /// The training images
 
+    int n_clusters {0};     /// The number of clusters
     int n_tests {0};        /// The number of tests performed
     int n_correct {0};      /// The number of correct classifications
     int n_incorrect {0};    /// The number of incorrect classifications

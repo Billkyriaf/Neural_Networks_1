@@ -118,16 +118,16 @@ std::array<MNIST_Image *, 10> NCC::getClassMeans() const {
  * Increment the number of correct classifications
  */
 void NCC::incrementCorrect() {
-    n_correct++;
-    n_tests++;
+    NCC::n_correct++;
+    NCC::n_tests++;
 }
 
 /**
  * Increment the number of incorrect classifications
  */
 void NCC::incrementIncorrect() {
-    n_incorrect++;
-    n_tests++;
+    NCC::n_incorrect++;
+    NCC::n_tests++;
 }
 
 // -------------- Methods -------------- //
@@ -345,7 +345,7 @@ void NCC::printStats() {
  * Calculate the accuracy
  */
 void NCC::calculateAccuracy() {
-    accuracy = (double(n_correct) / double(n_tests)) * 100;
+    NCC::accuracy = (double(NCC::n_correct) / double(NCC::n_tests)) * 100;
 }
 
 

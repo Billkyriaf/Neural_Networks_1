@@ -135,15 +135,34 @@ int KNN::classifyImage(int test_index, bool verbose) {
     }
 
 
-    std::sort(training_images.begin(), training_images.end(), [](MNIST_Image *a, MNIST_Image *b) {
-        return a->getDistance() < b->getDistance();
-    });
+//    std::sort(training_images.begin(), training_images.end(), [](MNIST_Image *a, MNIST_Image *b) {
+//        return a->getDistance() < b->getDistance();
+//    });
 
+    // Get the k smallest distances
+    std::vector<MNIST_Image> k_smallest_images;
+    k_smallest_images.reserve(k);
+
+    /*
+     * Instead of sorting the entire array, we can simply get the smallest distance and remove it from the array k times
+     * The time complexity is roughly O(kn) instead of O(nlogn)
+     */
+    for (int i = 0; i < k; ++i) {
+        auto min = std::min_element(training_images.begin() + i, training_images.end(), [](MNIST_Image *a, MNIST_Image *b) {
+            return a->getDistance() < b->getDistance();
+        });
+
+        // add the minimum element to the vector
+        k_smallest_images.push_back(**min);
+
+        // swap the minimum element with the first element
+        std::swap(*min, training_images.at(i));
+    }
 
     // Count the number of images with each label
     std::array<int, 10> label_count {};
     for (int i = 0; i < k; ++i) {
-        label_count.at(training_images.at(i)->getLabel())++;
+        label_count.at(k_smallest_images.at(i).getLabel())++;
     }
 
     // Find the label with the most votes
