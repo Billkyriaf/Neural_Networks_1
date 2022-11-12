@@ -16,7 +16,7 @@ Print_Progress::Print_Progress() : n_threads(16), progress_max(625){
     // init progress array
     for (int i = 0; i < 16; i++) {
         progress[i] = 0;
-        progress_increment[i] = ">________";
+        progress_increment[i] = "#........";
     }
 
     printTableHeader();
@@ -37,7 +37,7 @@ Print_Progress::Print_Progress(int threads, int max_progress) : n_threads(thread
     // init progress array
     for (int i = 0; i < n_threads; i++) {
         progress.at(i) = 0;
-        progress_increment.at(i) = ">________";
+        progress_increment.at(i) = "#........";
     }
 
     printTableHeader();
@@ -90,21 +90,21 @@ void Print_Progress::updateProgress(int caller_id) {
 
 
     if (progress[caller_id] < 1 * 100 / 8){
-        progress_increment[caller_id] = "=>_______";
+        progress_increment[caller_id] = "#........";
     } else if (progress[caller_id] < 2 * 100 / 8){
-        progress_increment[caller_id] = "==>______";
+        progress_increment[caller_id] = "##.......";
     } else if (progress[caller_id] < 3 * 100 / 8){
-        progress_increment[caller_id] = "===>_____";
+        progress_increment[caller_id] = "###......";
     } else if (progress[caller_id] < 4 * 100 / 8){
-        progress_increment[caller_id] = "====>____";
+        progress_increment[caller_id] = "####.....";
     } else if (progress[caller_id] < 5 * 100 / 8){
-        progress_increment[caller_id] = "=====>___";
+        progress_increment[caller_id] = "#####....";
     } else if (progress[caller_id] < 6 * 100 / 8){
-        progress_increment[caller_id] = "======>__";
+        progress_increment[caller_id] = "######...";
     } else if (progress[caller_id] < 7 * 100 / 8){
-        progress_increment[caller_id] = "=======>_";
+        progress_increment[caller_id] = "#######..";
     } else if (progress[caller_id] < 8 * 100 / 8){
-        progress_increment[caller_id] = "========>";
+        progress_increment[caller_id] = "########.";
     } else {
         progress_increment[caller_id] = "  Done!  ";
     }
