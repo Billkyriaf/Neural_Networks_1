@@ -3,11 +3,11 @@
 
 #include "mnist/MNIST_Import.h"
 #include "utils/Timer.h"
-#include "ncm/NCC.h"
+#include "ncc/NCC.h"
 
 
 /**
- * Main function classifies the test images using the KNN algorithm. The arguments are:
+ * Main function classifies the test images using the Nearest Centroid Classification algorithm. The arguments are:
  *   - The path to the dataset directory. The directory should contain the files:
  *     - train-images-idx3-ubyte
  *     - train-labels-idx1-ubyte
