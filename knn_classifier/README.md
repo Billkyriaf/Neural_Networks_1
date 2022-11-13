@@ -49,7 +49,7 @@ This project uses make utilities to build and run the executables.
 
 #### 3.2. C++ 11 capable Compiler
 
-This project uses C++ 14 features and requires a compiler that supports C++ 11.
+This project uses C++ 14 features and requires a compiler that supports C++ 14.
 
 #### 3.3. progressbar Library
 

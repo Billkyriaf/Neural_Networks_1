@@ -34,7 +34,7 @@ INC_DIRS := $(shell find $(SRC_DIRS) -type d) $(shell find $(INC_DIRS) -type d)
 # Add a prefix to INC_DIRS. So moduleA would become -ImoduleA. GCC understands this -I flag
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-CC_FLAGS := $(INC_FLAGS) -O3                    # -Wall -g
+CC_FLAGS := $(INC_FLAGS) -O3 -std=C++14
 
 $(BUILD_DIR)/knn.out: $(KNN_SRC) $(LIBRARIES_SRC)
 	@echo
