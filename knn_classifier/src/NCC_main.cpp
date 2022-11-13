@@ -18,7 +18,6 @@
  *   - The value of K
  *
  *   Optional arguments:
- *   - The number of threads to use
  *   - The number of test images to classify
  *   - The starting index of the test images
  *
@@ -31,7 +30,7 @@ int main(int argc, char *argv[]){
     // Parse the arguments
     if (argc < 5){
         std::cerr << "Usage: " << argv[0]
-                  << " -d <dataset directory> -k <value of K> [-t <number of threads> -n <number of test images>"
+                  << " -d <dataset directory> -k <value of K> [-n <number of test images>"
                      " -s <starting index for tests>]"
                   << std::endl;
     }
@@ -39,20 +38,11 @@ int main(int argc, char *argv[]){
     std::string dataset_dir = argv[2];
     int k = std::stoi(argv[4]);
 
-    int n_threads = -1;
     int n_tests = -1;
     int start_index = -1;
 
     for (int i = 5; i < argc - 1; i+=2) {
-        if (strcmp(argv[i], "-t") == 0){
-            n_threads = std::stoi(argv[i + 1]);
-
-            if (n_threads < 1 || n_threads > 16){
-                std::cerr << "The number of threads must be greater than 0 and less than 256" << std::endl;
-                return 1;
-            }
-
-        } else if (strcmp(argv[i], "-n") == 0){
+        if (strcmp(argv[i], "-n") == 0){
             n_tests = std::stoi(argv[i + 1]);
 
             if (n_tests < 1 || n_tests > 10000){
@@ -75,7 +65,6 @@ int main(int argc, char *argv[]){
 
     }
 
-    n_threads = n_threads == -1 ? 16 : n_threads;
     n_tests = n_tests == -1 ? 10000 : n_tests;
     start_index = start_index == -1 ? 0 : start_index;
 
@@ -84,14 +73,9 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
-    if (n_tests < n_threads){
-        n_threads = n_tests;
-    }
-
     std::cout << "Arguments: " << std::endl << std::endl;
     std::cout << "    Dataset directory: " << dataset_dir << std::endl;
     std::cout << "    K: " << k << std::endl;
-    std::cout << "    Number of threads: " << n_threads << std::endl;
     std::cout << "    Number of test images: " << n_tests << std::endl;
     std::cout << "    Starting index: " << start_index << std::endl;
     std::cout << std::endl;

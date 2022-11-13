@@ -82,7 +82,7 @@ run_ncc: $(BUILD_DIR)/ncc.out
 	@mkdir -p images
 	@echo
 	@echo
-	@$(BUILD_DIR)/ncc.out -d ./data -k 3 -t 16 -n 10000 -s 0  #TODO add arguments
+	@$(BUILD_DIR)/ncc.out -d ./data -k 3 -n 10000 -s 0  #TODO add arguments
 	@echo
 	@echo
 
