@@ -34,7 +34,7 @@ INC_DIRS := $(shell find $(SRC_DIRS) -type d) $(shell find $(INC_DIRS) -type d)
 # Add a prefix to INC_DIRS. So moduleA would become -ImoduleA. GCC understands this -I flag
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-CC_FLAGS := $(INC_FLAGS) -O3 -std=C++14
+CC_FLAGS := $(INC_FLAGS) -O3 -std=c++14
 
 $(BUILD_DIR)/knn.out: $(KNN_SRC) $(LIBRARIES_SRC)
 	@echo
@@ -72,7 +72,7 @@ run_knn: $(BUILD_DIR)/knn.out
 	@mkdir -p images
 	@echo
 	@echo
-	@$(BUILD_DIR)/knn.out -d ./data -k 1 -t 16 -n 10000 -s 0
+	$(BUILD_DIR)/knn.out -d ./data -k 7 -t 16 -n 10000 -s 0
 	@echo
 	@echo
 
@@ -82,7 +82,7 @@ run_ncc: $(BUILD_DIR)/ncc.out
 	@mkdir -p images
 	@echo
 	@echo
-	@$(BUILD_DIR)/ncc.out -d ./data -k 3 -n 10000 -s 0
+	$(BUILD_DIR)/ncc.out -d ./data -n 10000 -s 0
 	@echo
 	@echo
 
@@ -92,7 +92,7 @@ run_ncc_cluster: $(BUILD_DIR)/ncc_cluster.out
 	@mkdir -p pre_fit
 	@echo
 	@echo
-	@$(BUILD_DIR)/ncc_cluster.out -d ./data -c 350 -fit
+	$(BUILD_DIR)/ncc_cluster.out -d ./data -c 350 -fit
 	@echo
 	@echo
 
