@@ -309,7 +309,7 @@ int NCC::classifyImage(int test_index, bool verbose) {
         class_distances[i] = class_means.at(i)->calculateDistance(*test_images.at(test_index));
     }
 
-    int min_label;  // The label of the class mean image with the smallest distance
+    int min_label = 0;  // The label of the class mean image with the smallest distance
     double min = class_distances[0];  // The smallest distance
 
     // Find the class mean image with the smallest distance

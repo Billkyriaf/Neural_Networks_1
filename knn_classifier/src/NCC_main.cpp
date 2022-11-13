@@ -121,7 +121,7 @@ int main(int argc, char *argv[]){
     std::cout << std::endl << "Saving training image as 'train_0.pgm'... Label: " << (int)training_images.at(0)->getLabel() << std::endl;
     training_images.at(0)->saveImage("images/train_0");
 
-    std::cout << "Saving test image as 'test_1.pgm'... Label: " << (int)test_images.at(0)->getLabel() << std::endl << std::endl;
+    std::cout << "Saving test image as 'test_0.pgm'... Label: " << (int)test_images.at(0)->getLabel() << std::endl << std::endl;
     test_images.at(0)->saveImage("images/test_0");
 
     std::cout << std::endl;
@@ -130,11 +130,11 @@ int main(int argc, char *argv[]){
     timer.startTimer();
 
     // Create the NCC object
-    NCC ncm(training_images, test_images);
+    NCC ncc(training_images, test_images);
 
     std::cout << "Determine the mean vector for each class..." << std::endl;
     std::cout << std::endl;
-    ncm.calculateMeans();  // Calculate the means for each class
+    ncc.calculateMeans();  // Calculate the means for each class
 
     std::cout << std::endl;
 
@@ -144,7 +144,7 @@ int main(int argc, char *argv[]){
 
     // save the means as pgm files
     for (int i = 0; i < 10; i++){
-        ncm.getClassMeans().at(i)->saveImage("images/mean_" + std::to_string(i));
+        ncc.getClassMeans().at(i)->saveImage("images/mean_" + std::to_string(i));
     }
 
     std::cout << std::endl;
@@ -156,9 +156,21 @@ int main(int argc, char *argv[]){
     progressbar bar(n_tests);
 
     std::cout << "    Classifying test images ";
+
+    int miss = 0;  // The number of miss images
+
     for (int i = 0; i < n_tests; ++i) {
         bar.update();
-        ncm.classifyImage(i + start_index, false);  // Classify the image
+        int res = ncc.classifyImage(i + start_index, false);  // Classify the image
+
+        // If the result is not the same as the label, save the image
+        if (res != test_images.at(i + start_index)->getLabel() && miss < 10){
+            miss++;
+            test_images.at(i + start_index)->saveImage(
+                    "images/ncc_misclassified/miss_" + std::to_string(miss) + "_res_" + std::to_string(res) +
+                    "_label_" + std::to_string(test_images.at(i + start_index)->getLabel())
+            );
+        }
     }
 
     std::cout << std::endl;
@@ -170,7 +182,7 @@ int main(int argc, char *argv[]){
     std::cout << std::endl;
 
     std::cout << "Classification Summary:" << std::endl << std::endl;
-    ncm.printStats();  // Print the statistics
+    ncc.printStats();  // Print the statistics
 
     return 0;
 }

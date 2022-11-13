@@ -80,6 +80,7 @@ run_knn: $(BUILD_DIR)/knn.out
 build_ncc: $(BUILD_DIR)/ncc.out
 run_ncc: $(BUILD_DIR)/ncc.out
 	@mkdir -p images
+	@mkdir -p images/ncc_misclassified
 	@echo
 	@echo
 	$(BUILD_DIR)/ncc.out -d ./data -n 10000 -s 0
@@ -89,6 +90,7 @@ run_ncc: $(BUILD_DIR)/ncc.out
 build_ncc_cluster: $(BUILD_DIR)/ncc_cluster.out
 run_ncc_cluster: $(BUILD_DIR)/ncc_cluster.out
 	@mkdir -p images
+	@mkdir -p images/ncc_cluster_misclassified
 	@mkdir -p pre_fit
 	@echo
 	@echo
