@@ -1,6 +1,7 @@
 \documentclass[12pt]{report}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
+\usepackage{subfig}
 \usepackage[a4paper,width=150mm,top=25mm,bottom=25mm]{geometry}
 \usepackage{pgfplots}
 \usepackage{mathtools,amssymb}
@@ -10,6 +11,7 @@
 \usepackage{hyperref}
 \usepackage{indentfirst}
 \usepackage{tabularx}
+\usepackage{float}
 
 \hypersetup{
     colorlinks=true,
@@ -24,6 +26,10 @@
 \graphicspath{ {images/} }
 \addbibresource{bib/bibliography.bib}
 
+\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{0}
+
+\setlength{\belowcaptionskip}{-20pt}
 
 \begin{document}
 
@@ -44,10 +50,24 @@
     \section*{Algorithms and Results}
     \input{chapters/testing.tex}
 
-    % \addcontentsline{toc}{section}{Conclusions}
-    % \section*{Conclusions}
-    % \input{chapters/conclusions}
+    \addcontentsline{toc}{section}{Conclusions}
+    \section*{Conclusions}
+    \input{chapters/conclusions}
 
-    \printbibliography %Prints bibliography
+    \newpage
+
+    \begin{minipage}[b]{1\textwidth}
+        \listoffigures
+    \end{minipage}
+    
+    \begin{minipage}[b]{1\textwidth}
+        \listoftables
+    \end{minipage}
+
+
+    \begin{minipage}[b]{1\textwidth}
+        \printbibliography
+    \end{minipage}
+    
 
 \end{document}

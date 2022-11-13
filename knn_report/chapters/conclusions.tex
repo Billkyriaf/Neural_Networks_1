@@ -1,0 +1,18 @@
+The KNN algorithm has the greatest accuracy of the three algorithms. The disadvantage is that
+the classification time for each image is very high. In the MNIST dataset this is not a big problem
+because the training set is relatively small. Using bigger dataset would significantly increase the
+classification time. The time complexity of the KNN algorithm is O\(m*n\) where n is the number of
+training images and m is the number of test images.
+
+The K-means algorithm has a better time complexity than the KNN algorithm because after the initial setup
+the classification time is O\(10m\) where m is the number of test images. The disadvantage of the algorithm
+is the lack of accuracy.
+
+Finally the K-means++ algorithm has better accuracy than the K-means algorithm but still worse than the KNN.
+Again after the initial setup the classification time is small. There are a few parameters that can be changed
+to improve the accuracy of the algorithm. The number of clusters, the number of iterations and the portion of
+the data to use for the initial centroids, and for the later fitting of them. 
+
+In this projects the parameters are probably sub optimal but still produce an above average result. Further 
+optimization of the parameters could improve the accuracy of the algorithm to levels directly comparable to
+the KNN algorithm.   
