@@ -15,8 +15,6 @@
  *     - t10k-images-idx3-ubyte
  *     - t10k-labels-idx1-ubyte
  *
- *   - The value of K
- *
  *   Optional arguments:
  *   - The number of test images to classify
  *   - The starting index of the test images
@@ -28,7 +26,7 @@
  */
 int main(int argc, char *argv[]){
     // Parse the arguments
-    if (argc < 5){
+    if (argc < 3){
         std::cerr << "Usage: " << argv[0]
                   << " -d <dataset directory> -k <value of K> [-n <number of test images>"
                      " -s <starting index for tests>]"
@@ -36,12 +34,11 @@ int main(int argc, char *argv[]){
     }
 
     std::string dataset_dir = argv[2];
-    int k = std::stoi(argv[4]);
 
     int n_tests = -1;
     int start_index = -1;
 
-    for (int i = 5; i < argc - 1; i+=2) {
+    for (int i = 3; i < argc - 1; i+=2) {
         if (strcmp(argv[i], "-n") == 0){
             n_tests = std::stoi(argv[i + 1]);
 
@@ -75,7 +72,6 @@ int main(int argc, char *argv[]){
 
     std::cout << "Arguments: " << std::endl << std::endl;
     std::cout << "    Dataset directory: " << dataset_dir << std::endl;
-    std::cout << "    K: " << k << std::endl;
     std::cout << "    Number of test images: " << n_tests << std::endl;
     std::cout << "    Starting index: " << start_index << std::endl;
     std::cout << std::endl;

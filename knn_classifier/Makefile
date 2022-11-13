@@ -72,7 +72,7 @@ run_knn: $(BUILD_DIR)/knn.out
 	@mkdir -p images
 	@echo
 	@echo
-	@$(BUILD_DIR)/knn.out -d ./data -k 1 -t 16 -n 10000 -s 0  #TODO add arguments
+	@$(BUILD_DIR)/knn.out -d ./data -k 1 -t 16 -n 10000 -s 0
 	@echo
 	@echo
 
@@ -82,7 +82,7 @@ run_ncc: $(BUILD_DIR)/ncc.out
 	@mkdir -p images
 	@echo
 	@echo
-	@$(BUILD_DIR)/ncc.out -d ./data -k 3 -n 10000 -s 0  #TODO add arguments
+	@$(BUILD_DIR)/ncc.out -d ./data -k 3 -n 10000 -s 0
 	@echo
 	@echo
 
@@ -92,7 +92,7 @@ run_ncc_cluster: $(BUILD_DIR)/ncc_cluster.out
 	@mkdir -p pre_fit
 	@echo
 	@echo
-	@$(BUILD_DIR)/ncc_cluster.out -d ./data -c 350 #-fit
+	@$(BUILD_DIR)/ncc_cluster.out -d ./data -c 350 -fit
 	@echo
 	@echo
 
