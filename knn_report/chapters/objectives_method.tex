@@ -1,0 +1,32 @@
+\subsection*{Objective}
+
+This assignment will implement the algorithms found in those libraries in C++ to the best ability of the author. The main focus
+is to achieve good accuracy in a reasonable amount of run time. For this reason parallel programming techniques will be used.
+
+\subsection*{Equipment}
+
+All of the test were run on a 64-bit Manjaro Linux system with an AMD Ryzen 7 5700G processor with 8 cores and 16 threads. The
+processor has a base clock of 3.8 GHz and a boost clock of 4.6 GHz. The system memory is 16 GB DDR4 3200 MHz.
+
+\subsection*{Methodology}
+\subsubsection{1. KNN}
+
+The KNN algorithm is a supervised learning algorithm. The only parameters of the algorithm that is changed in this implementation
+is the number of neighbors. The algorithm requires to calculate the distance between the test image and all the training images. The
+distance is calculated using the Euclidean distance formula for each pixel of the image.
+
+\subsubsection{2. K-means}
+
+The K-means algorithm is an optimization of the KNN algorithm. Instead of calculating the distance between the test image and all The
+training images, the K-means algorithm calculates the distance between the test image and the centroids of the clusters. The centroids
+are the mean of the images in the cluster. This K-means implementation uses 10 clusters. The plain K-means algorithm has not parameters
+to change.
+
+
+\subsubsection{3. K-means with advanced clustering}
+
+The next step in the optimization of the K-means algorithm is to use a more advanced clustering algorithm. The clustering algorithm used
+in this implementation is the K-means++ algorithm. The K-means++ algorithm classifies the data into more clusters than the original ones.
+With this optimization more features can be extracted from the data. The K-means++ algorithm has quite a few parameters to change such as
+the number of clusters, the number of iterations and the portion of the data to use for the initial centroids. The exact implementations 
+for all the algorithms will be explained in the next chapter.

@@ -1,0 +1,53 @@
+\documentclass[12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage[a4paper,width=150mm,top=25mm,bottom=25mm]{geometry}
+\usepackage{pgfplots}
+\usepackage{mathtools,amssymb}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage[backend=biber,style=numeric,sorting=ynt]{biblatex}
+\usepackage{hyperref}
+\usepackage{indentfirst}
+\usepackage{tabularx}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=magenta,      
+    urlcolor=blue,
+    citecolor=blue,
+    pdftitle={Pthreads and openCilk systems},
+}
+
+\pgfplotsset{compat=1.7}
+\graphicspath{ {images/} }
+\addbibresource{bib/bibliography.bib}
+
+
+\begin{document}
+
+    \input{chapters/title_page.tex}
+    
+    \tableofcontents
+    \clearpage
+    
+    \addcontentsline{toc}{section}{Introduction}
+    \section*{Introduction}
+    \input{chapters/introduction}
+
+    \addcontentsline{toc}{section}{Objective and Methodology}
+    \section*{Objective and Methodology}
+    \input{chapters/objectives_method}
+
+    \addcontentsline{toc}{section}{Algorithms and Results}
+    \section*{Algorithms and Results}
+    \input{chapters/testing.tex}
+
+    % \addcontentsline{toc}{section}{Conclusions}
+    % \section*{Conclusions}
+    % \input{chapters/conclusions}
+
+    \printbibliography %Prints bibliography
+
+\end{document}

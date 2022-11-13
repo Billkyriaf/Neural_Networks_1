@@ -1,0 +1,12 @@
+*
+
+!.gitignore
+!knn_report.tex
+!/bib/
+!/chapters/
+!/template/
+!/images/
+!*.tex
+!*.txt
+!*.bib
+!*.pdf
