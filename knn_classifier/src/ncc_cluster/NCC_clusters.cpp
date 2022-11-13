@@ -1,6 +1,8 @@
 #include <algorithm>
 #include <limits>
 #include <fstream>
+#include <chrono>
+#include <random>
 
 #include "../../include/progressbar.h"
 #include "NCC_clusters.h"
@@ -17,7 +19,8 @@
 NCC_clusters::NCC_clusters(int n_clusters, const std::vector<MNIST_Image *> &training_images,
                            const std::vector<MNIST_Image *> &test_images) : n_clusters(n_clusters), from_file(false) {
     // seed the random number generator
-    srand(time(nullptr));
+    auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+    generator = new std::default_random_engine(seed);
 
     // Deep copy the training images
     for (auto & training_image : training_images) {
@@ -43,19 +46,18 @@ NCC_clusters::NCC_clusters(int n_clusters, const std::vector<MNIST_Image *> &tra
     NCC_clusters::clusters.reserve(n_clusters);
 
     for (int i = 0; i < n_clusters; i++) {
-        NCC_clusters::clusters.push_back(std::vector<MNIST_Image *>());
+        NCC_clusters::clusters.emplace_back();
         NCC_clusters::clusters.at(i).reserve(training_images.size() / n_clusters);
     }
 
-    std::cout << "Initializing the clusters  ";
+    std::cout << std::endl << "    Initializing the clusters  ";
 
     // Initialize the centroid means using k-means++
     NCC_clusters::initializeCentroids(30);
 
     std::cout << std::endl;
-    std::cout << std::endl;
 
-    std::cout << "Fitting the clusters       ";
+    std::cout << std::endl << "    Fitting the clusters       ";
 
     progressbar bar((N_ITERATIONS) * 60);
 
@@ -91,8 +93,12 @@ NCC_clusters::NCC_clusters(int n_clusters, const std::vector<MNIST_Image *> &tra
  *
  * @param cluster_dir the directory containing the cluster files
  */
-NCC_clusters::NCC_clusters(std::string cluster_dir, const std::vector<MNIST_Image *>& training_images,
+NCC_clusters::NCC_clusters(const std::string& cluster_dir, const std::vector<MNIST_Image *>& training_images,
                            const std::vector<MNIST_Image *>& test_images) : from_file(true) {
+
+    // seed the random number generator
+    auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+    generator = new std::default_random_engine(seed);
 
     // Deep copy the training images
     for (auto & training_image : training_images) {
@@ -112,14 +118,14 @@ NCC_clusters::NCC_clusters(std::string cluster_dir, const std::vector<MNIST_Imag
     std::ifstream stats_file(cluster_dir + "/stats");
 
     // read the number of clusters
-    int n_clusters;
-    stats_file >> n_clusters;
+    int clusters_num;
+    stats_file >> clusters_num;
 
     // initialize the cluster means
-    NCC_clusters::cluster_means.reserve(n_clusters);
+    NCC_clusters::cluster_means.reserve(clusters_num);
 
     // read the cluster means from the files
-    for (int i = 0; i < n_clusters; i++) {
+    for (int i = 0; i < clusters_num; i++) {
         // open the cluster mean file
         std::ifstream mean_file(cluster_dir + "/mean_cluster_" + std::to_string(i) + ".pgm");
 
@@ -171,6 +177,7 @@ NCC_clusters::~NCC_clusters() {
         }
     }
 
+    delete generator;
 }
 
 // -------------- Setters -------------- //
@@ -201,7 +208,7 @@ void NCC_clusters::fitClusters(bool is_final, int dataset_fraction) {
 
     // assign random images from the training images to the random training images
     for (int i = 0; i < NCC_clusters::training_images.size() / dataset_fraction; i++) {
-        random_training_images.push_back(NCC_clusters::training_images.at(rand() % NCC_clusters::training_images.size()));
+        random_training_images.push_back(NCC_clusters::training_images.at((*generator)() % NCC_clusters::training_images.size()));
     }
 
     // count the number of images in each cluster
@@ -322,12 +329,13 @@ void NCC_clusters::printStats() {
 
     // Print the results
     std::cout << std::endl;
-    std::cout << std::endl;
-    std::cout << "Number of tests: " << n_tests << std::endl;
-    std::cout << "Number of correct classifications: " << n_correct << std::endl;
-    std::cout << "Number of incorrect classifications: " << n_incorrect << std::endl;
+    std::cout << "Classification Summary:" << std::endl << std::endl;
+
+    std::cout << "    Number of tests: " << n_tests << std::endl;
+    std::cout << "    Number of correct classifications: " << n_correct << std::endl;
+    std::cout << "    Number of incorrect classifications: " << n_incorrect << std::endl;
     std::cout.precision(3);
-    std::cout << "Accuracy: " << std::fixed << accuracy << "%" << std::endl;
+    std::cout << "    Accuracy: " << std::fixed << accuracy << "%" << std::endl;
 }
 
 /**
@@ -372,7 +380,7 @@ typedef struct {
  * Thread function for calculating the distances to the cluster means
  */
 void *centroidThread(void *arg){
-    CentroidArgs *args = (CentroidArgs *) arg;
+    auto *args = (CentroidArgs *) arg;
     NCC_clusters *clusters = args->clusters;
 
     for (int i = args->start_index; i < args->end_index; i++) {
@@ -404,7 +412,7 @@ void *centroidThread(void *arg){
  */
 void NCC_clusters::initializeCentroids(int dataset_fraction) {
     // Select the first centroid at random
-    int first_centroid = rand() % NCC_clusters::training_images.size();
+    int first_centroid = int((*generator)() % NCC_clusters::training_images.size());
     NCC_clusters::cluster_means.push_back(NCC_clusters::training_images.at(first_centroid));
 
     progressbar p_bar((NCC_clusters::n_clusters - 1) * 60);
@@ -412,12 +420,12 @@ void NCC_clusters::initializeCentroids(int dataset_fraction) {
     // Select the remaining centroids
     for (int i = 1; i < NCC_clusters::n_clusters; i++) {
         // create a random part of the training images
-        std::vector<MNIST_Image *> random_training_images;
-        random_training_images.reserve(NCC_clusters::training_images.size() / dataset_fraction);
+        auto *random_training_images = new std::vector<MNIST_Image *>;
+        random_training_images->reserve(NCC_clusters::training_images.size() / dataset_fraction);
 
         // assign random images from the training images to the random training images
-        for (int i = 0; i < NCC_clusters::training_images.size() / dataset_fraction; i++) {
-            random_training_images.push_back(NCC_clusters::training_images.at(rand() % NCC_clusters::training_images.size()));
+        for (int j = 0; j < NCC_clusters::training_images.size() / dataset_fraction; j++) {
+            random_training_images->push_back(NCC_clusters::training_images.at((*generator)() % NCC_clusters::training_images.size()));
         }
 
         // Calculate the distance to the nearest centroid for each training image
@@ -425,7 +433,7 @@ void NCC_clusters::initializeCentroids(int dataset_fraction) {
         thread_distances.reserve(N_THREADS);
 
         for (int j = 0; j < N_THREADS; ++j) {
-            thread_distances.push_back(std::vector<double>());
+            thread_distances.emplace_back();
         }
 
         // thread attributes
@@ -435,25 +443,25 @@ void NCC_clusters::initializeCentroids(int dataset_fraction) {
         // create the threads
         for (int j = 0; j < N_THREADS; j++) {
             args[j].distances = &thread_distances.at(j);
-            args[j].distances->reserve(random_training_images.size() / N_THREADS);
+            args[j].distances->reserve(random_training_images->size() / N_THREADS);
             args[j].cluster_index = i;
             args[j].thread_id = j;
-            args[j].start_index = j * (random_training_images.size() / N_THREADS);
-            args[j].end_index = (j + 1) * (random_training_images.size() / N_THREADS);
-            args[j].images = &random_training_images;
+            args[j].start_index = int(j * (random_training_images->size() / N_THREADS));
+            args[j].end_index = int((j + 1) * (random_training_images->size() / N_THREADS));
+            args[j].images = random_training_images;
             args[j].clusters = this;
 
             pthread_create(&threads[j], nullptr, centroidThread, (void *) &args[j]);
         }
 
         // join the threads
-        for (int j = 0; j < N_THREADS; j++) {
-            pthread_join(threads[j], nullptr);
+        for (unsigned long thread : threads) {
+            pthread_join(thread, nullptr);
         }
 
         // accumulate the distances
         std::vector<double> distances;
-        distances.reserve(random_training_images.size());
+        distances.reserve(random_training_images->size());
 
         for (int j = 0; j < N_THREADS; j++) {
             distances.insert(distances.end(), thread_distances.at(j).begin(), thread_distances.at(j).end());
@@ -464,12 +472,14 @@ void NCC_clusters::initializeCentroids(int dataset_fraction) {
         int max_distance_index = int(std::distance(distances.begin(), max_distance));
 
         // Add the training image with the maximum distance to the cluster means
-        NCC_clusters::cluster_means.push_back(random_training_images.at(max_distance_index));
+        NCC_clusters::cluster_means.push_back(random_training_images->at(max_distance_index));
 
         // Update the progress bar
         for (int j = 0; j < 60; ++j) {
             p_bar.update();
         }
+
+        delete random_training_images;
     }
 }
 

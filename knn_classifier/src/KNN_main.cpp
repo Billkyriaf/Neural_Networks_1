@@ -206,11 +206,12 @@ int main(int argc, char *argv[]) {
         n_threads = n_tests;
     }
 
-    std::cout << "Dataset directory: " << dataset_dir << std::endl;
-    std::cout << "K: " << k << std::endl;
-    std::cout << "Number of threads: " << n_threads << std::endl;
-    std::cout << "Number of test images: " << n_tests << std::endl;
-    std::cout << "Starting index: " << start_index << std::endl;
+    std::cout << "Arguments:" << std::endl << std::endl;
+    std::cout << "    Dataset directory: " << dataset_dir << std::endl;
+    std::cout << "    K: " << k << std::endl;
+    std::cout << "    Number of threads: " << n_threads << std::endl;
+    std::cout << "    Number of test images: " << n_tests << std::endl;
+    std::cout << "    Starting index: " << start_index << std::endl;
     std::cout << std::endl;
 
 
@@ -227,7 +228,7 @@ int main(int argc, char *argv[]) {
     );
 
     //Start importing the images and labels
-
+    std::cout << std::endl << "Importing images and labels..." << std::endl << std::endl;
     mnist.readMetadata();  // Read the metadata from the file
     mnist.printMetadata();  // Print the metadata
 
@@ -245,7 +246,7 @@ int main(int argc, char *argv[]) {
 
     // Elapsed time for importing the images
     timer.stopTimer();
-    std::cout << "Time to read the data: ";
+    std::cout << "    Time to read the data: ";
     timer.displayElapsed();
 
     /*
@@ -253,7 +254,7 @@ int main(int argc, char *argv[]) {
      * the data was read correctly
      */
 
-    std::cout << "Saving training image as 'train_0.pgm'... Label: " << (int)training_images.at(0)->getLabel() << std::endl;
+    std::cout << std::endl << "Saving training image as 'train_0.pgm'... Label: " << (int)training_images.at(0)->getLabel() << std::endl;
     training_images.at(0)->saveImage("images/train_0");
 
     std::cout << "Saving test image as 'test_1.pgm'... Label: " << (int)test_images.at(0)->getLabel() << std::endl;
@@ -265,11 +266,12 @@ int main(int argc, char *argv[]) {
 
     // Start the classification process
     timer.startTimer();
+    std::cout << "Starting the classification..." << std::endl << std::endl;
 
     classifyImages(n_threads, k, n_tests, start_index, training_images, test_images);
 
     timer.stopTimer();
-    std::cout << std::endl << std::endl  << "Time to classify all the test images: ";
+    std::cout << std::endl << "    Time to classify the test images: ";
     timer.displayElapsed();
 
     // Free the memory

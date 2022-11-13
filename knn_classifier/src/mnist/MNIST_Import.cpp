@@ -180,28 +180,28 @@ void MNIST_Import::readMetadata() {
  * Print the metadata to the console
  */
 void MNIST_Import::printMetadata() const {
-    std::cout << "Training data:" << std::endl;
-    std::cout << "Magic number: " << tr_data_magic_number << std::endl;
-    std::cout << "Number of images: " << tr_data_count << std::endl;
-    std::cout << "Number of rows: " << tr_data_rows << std::endl;
-    std::cout << "Number of columns: " << tr_data_cols << std::endl;
+    std::cout << "    Training data:" << std::endl;
+    std::cout << "        Magic number: " << tr_data_magic_number << std::endl;
+    std::cout << "        Number of images: " << tr_data_count << std::endl;
+    std::cout << "        Number of rows: " << tr_data_rows << std::endl;
+    std::cout << "        Number of columns: " << tr_data_cols << std::endl;
     std::cout << std::endl;
 
-    std::cout << "Training labels:" << std::endl;
-    std::cout << "Magic number: " << tr_label_magic_number << std::endl;
-    std::cout << "Number of labels: " << tr_label_count << std::endl;
+    std::cout << "    Training labels:" << std::endl;
+    std::cout << "        Magic number: " << tr_label_magic_number << std::endl;
+    std::cout << "        Number of labels: " << tr_label_count << std::endl;
     std::cout << std::endl;
 
-    std::cout << "Test data:" << std::endl;
-    std::cout << "Magic number: " << ts_data_magic_number << std::endl;
-    std::cout << "Number of images: " << ts_data_count << std::endl;
-    std::cout << "Number of rows: " << ts_data_rows << std::endl;
-    std::cout << "Number of columns: " << ts_data_cols << std::endl;
+    std::cout << "    Test data:" << std::endl;
+    std::cout << "        Magic number: " << ts_data_magic_number << std::endl;
+    std::cout << "        Number of images: " << ts_data_count << std::endl;
+    std::cout << "        Number of rows: " << ts_data_rows << std::endl;
+    std::cout << "        Number of columns: " << ts_data_cols << std::endl;
     std::cout << std::endl;
 
-    std::cout << "Test labels:" << std::endl;
-    std::cout << "Magic number: " << ts_label_magic_number << std::endl;
-    std::cout << "Number of labels: " << ts_label_count << std::endl;
+    std::cout << "    Test labels:" << std::endl;
+    std::cout << "        Magic number: " << ts_label_magic_number << std::endl;
+    std::cout << "        Number of labels: " << ts_label_count << std::endl;
     std::cout << std::endl;
 }
 

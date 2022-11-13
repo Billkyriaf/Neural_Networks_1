@@ -3,6 +3,7 @@
 
 
 #include <vector>
+#include <random>
 #include "../mnist/MNIST_Image.h"
 
 class NCC_clusters {
@@ -11,7 +12,7 @@ public:
     NCC_clusters(int n_clusters, const std::vector<MNIST_Image *>& training_images,
                  const std::vector<MNIST_Image *>& test_images);
 
-    NCC_clusters(std::string cluster_dir, const std::vector<MNIST_Image *>& training_images,
+    NCC_clusters(const std::string& cluster_dir, const std::vector<MNIST_Image *>& training_images,
                  const std::vector<MNIST_Image *>& test_images);
 
     NCC_clusters() = delete;
@@ -41,6 +42,8 @@ private:
 
     std::vector<MNIST_Image *> training_images;   /// The training images
     std::vector<MNIST_Image *> test_images;       /// The training images
+
+    std::default_random_engine *generator;        /// The random number generator
 
     int n_clusters {0};     /// The number of clusters
     int n_tests {0};        /// The number of tests performed

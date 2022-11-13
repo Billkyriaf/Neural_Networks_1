@@ -221,11 +221,13 @@ void KNN::printStats(){
     // Print the results
     std::cout << std::endl;
     std::cout << std::endl;
-    std::cout << "Number of tests: " << n_tests << std::endl;
-    std::cout << "Number of correct classifications: " << n_correct << std::endl;
-    std::cout << "Number of incorrect classifications: " << n_incorrect << std::endl;
+    std::cout << std::endl;
+    std::cout << "Classification Summary:" << std::endl << std::endl;
+    std::cout << "    Number of tests: " << n_tests << std::endl;
+    std::cout << "    Number of correct classifications: " << n_correct << std::endl;
+    std::cout << "    Number of incorrect classifications: " << n_incorrect << std::endl;
     std::cout.precision(3);
-    std::cout << "Accuracy: " << std::fixed << accuracy << "%" << std::endl;
+    std::cout << "    Accuracy: " << std::fixed << accuracy << "%" << std::endl;
 
 }
 

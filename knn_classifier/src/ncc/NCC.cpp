@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "NCC.h"
+#include "../../include/progressbar.h"
 
 #define MEAN_THREADS 16
 
@@ -138,6 +139,8 @@ void NCC::incrementIncorrect() {
 typedef struct {
     int start;  // The index of the first image to process
     int end;  // The index of the last image to process
+    pthread_mutex_t *progress_mutex;  // The mutex to lock
+    progressbar *bar;  // The progress bar
 
     std::vector<std::vector<int>> *means;   // The means
     std::vector<int> *counts;  // The counts
@@ -157,6 +160,12 @@ void *calculateMeansThread(void *args) {
 
     // Calculate the means from start to end
     for (int i = thread_args->start; i < thread_args->end; i++) {
+
+        // lock the mutex and update the progress bar
+        pthread_mutex_lock(thread_args->progress_mutex);
+        thread_args->bar->update();
+        pthread_mutex_unlock(thread_args->progress_mutex);
+
         int label = thread_args->ncm->training_images[i]->getLabel();  // The label of the image
         thread_args->counts->at(label)++;  // update the count
 
@@ -220,11 +229,19 @@ void NCC::calculateMeans() {
     pthread_attr_t pthread_custom_attr;  // The attributes of the threads
     pthread_attr_init(&pthread_custom_attr);  // Initialize the attributes
 
+    // create a mutex for the progress bar
+    auto *progress_mutex = new pthread_mutex_t;
+    pthread_mutex_init(progress_mutex, nullptr);
+
     std::array<Thread_args, MEAN_THREADS> thread_args{};  // The arguments for each thread
     std::array<pthread_t, MEAN_THREADS> threads{};  // The threads
 
     int n_images = int(training_images.size());  // The number of images
     int n_images_per_thread = n_images / MEAN_THREADS;  // The number of images each thread will process
+
+    auto *bar = new progressbar(n_images);  // The progress bar
+
+    std::cout << "    Calculating means ";
 
     // Create the threads
     for (int i = 0; i < MEAN_THREADS; i++) {
@@ -232,6 +249,8 @@ void NCC::calculateMeans() {
         thread_args[i].end = (i + 1) * n_images_per_thread;
         thread_args[i].means = &thread_means[i];
         thread_args[i].counts = &thread_counts[i];
+        thread_args[i].progress_mutex = progress_mutex;
+        thread_args[i].bar = bar;
         thread_args[i].ncm = this;
 
         pthread_create(&threads[i], &pthread_custom_attr, (thread_function_ptr) calculateMeansThread, &thread_args[i]);
@@ -241,6 +260,8 @@ void NCC::calculateMeans() {
     for (int i = 0; i < MEAN_THREADS; i++) {
         pthread_join(threads[i], nullptr);
     }
+
+    std::cout << std::endl;
 
     // Combine the results to the first thread
     for (int thread_id = 1; thread_id < MEAN_THREADS; thread_id++) {
@@ -267,6 +288,9 @@ void NCC::calculateMeans() {
 
     // free the memory
     pthread_attr_destroy(&pthread_custom_attr);
+    pthread_mutex_destroy(progress_mutex);
+
+    delete progress_mutex;
 }
 
 
@@ -332,13 +356,12 @@ void NCC::printStats() {
     calculateAccuracy();  // Calculate the accuracy
 
     // Print the results
-    std::cout << std::endl;
-    std::cout << std::endl;
-    std::cout << "Number of tests: " << n_tests << std::endl;
-    std::cout << "Number of correct classifications: " << n_correct << std::endl;
-    std::cout << "Number of incorrect classifications: " << n_incorrect << std::endl;
+    std::cout << "    Number of tests: " << n_tests << std::endl;
+    std::cout << "    Number of correct classifications: " << n_correct << std::endl;
+    std::cout << "    Number of incorrect classifications: " << n_incorrect << std::endl;
     std::cout.precision(3);
-    std::cout << "Accuracy: " << std::fixed << accuracy << "%" << std::endl;
+    std::cout << "    Accuracy: " << std::fixed << accuracy << "%" << std::endl;
+    std::cout << std::endl;
 }
 
 /**

@@ -4,6 +4,7 @@
 #include "mnist/MNIST_Import.h"
 #include "utils/Timer.h"
 #include "ncc/NCC.h"
+#include "../include/progressbar.h"
 
 
 /**
@@ -87,11 +88,12 @@ int main(int argc, char *argv[]){
         n_threads = n_tests;
     }
 
-    std::cout << "Dataset directory: " << dataset_dir << std::endl;
-    std::cout << "K: " << k << std::endl;
-    std::cout << "Number of threads: " << n_threads << std::endl;
-    std::cout << "Number of test images: " << n_tests << std::endl;
-    std::cout << "Starting index: " << start_index << std::endl;
+    std::cout << "Arguments: " << std::endl << std::endl;
+    std::cout << "    Dataset directory: " << dataset_dir << std::endl;
+    std::cout << "    K: " << k << std::endl;
+    std::cout << "    Number of threads: " << n_threads << std::endl;
+    std::cout << "    Number of test images: " << n_tests << std::endl;
+    std::cout << "    Starting index: " << start_index << std::endl;
     std::cout << std::endl;
 
 
@@ -109,6 +111,7 @@ int main(int argc, char *argv[]){
     );
 
     //Start importing the images and labels
+    std::cout << std::endl << "Importing the images and labels..." << std::endl << std::endl;
 
     mnist.readMetadata();  // Read the metadata from the file
     mnist.printMetadata();  // Print the metadata
@@ -127,7 +130,7 @@ int main(int argc, char *argv[]){
 
     // Elapsed time for importing the images
     timer.stopTimer();
-    std::cout << "Time to read the data: ";
+    std::cout << "    Time to read the data: ";
     timer.displayElapsed();
 
     /*
@@ -135,15 +138,13 @@ int main(int argc, char *argv[]){
      * the data was read correctly
      */
 
-    std::cout << "Saving training image as 'train_0.pgm'... Label: " << (int)training_images.at(0)->getLabel() << std::endl;
+    std::cout << std::endl << "Saving training image as 'train_0.pgm'... Label: " << (int)training_images.at(0)->getLabel() << std::endl;
     training_images.at(0)->saveImage("images/train_0");
 
-    std::cout << "Saving test image as 'test_1.pgm'... Label: " << (int)test_images.at(0)->getLabel() << std::endl;
+    std::cout << "Saving test image as 'test_1.pgm'... Label: " << (int)test_images.at(0)->getLabel() << std::endl << std::endl;
     test_images.at(0)->saveImage("images/test_0");
 
     std::cout << std::endl;
-    std::cout << std::endl;
-
 
     // Start the classification process
     timer.startTimer();
@@ -151,22 +152,45 @@ int main(int argc, char *argv[]){
     // Create the NCC object
     NCC ncm(training_images, test_images);
 
+    std::cout << "Determine the mean vector for each class..." << std::endl;
+    std::cout << std::endl;
     ncm.calculateMeans();  // Calculate the means for each class
+
+    std::cout << std::endl;
+
+    timer.stopTimer();
+    std::cout << "    Time to calculate the means: ";
+    timer.displayElapsed();
 
     // save the means as pgm files
     for (int i = 0; i < 10; i++){
         ncm.getClassMeans().at(i)->saveImage("images/mean_" + std::to_string(i));
     }
 
+    std::cout << std::endl;
+    std::cout << "Starting the classification..." << std::endl;
+    std::cout << std::endl;
+
+    timer.startTimer();
+
+    progressbar bar(n_tests);
+
+    std::cout << "    Classifying test images ";
     for (int i = 0; i < n_tests; ++i) {
+        bar.update();
         ncm.classifyImage(i + start_index, false);  // Classify the image
     }
 
-    ncm.printStats();  // Print the statistics
+    std::cout << std::endl;
+    std::cout << std::endl;
 
     timer.stopTimer();
-    std::cout << "Calculating the means took: ";
+    std::cout << "    Time to classify the images: ";
     timer.displayElapsed();
+    std::cout << std::endl;
+
+    std::cout << "Classification Summary:" << std::endl << std::endl;
+    ncm.printStats();  // Print the statistics
 
     return 0;
 }

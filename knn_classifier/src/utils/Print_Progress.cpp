@@ -49,7 +49,7 @@ Print_Progress::Print_Progress(int threads, int max_progress) : n_threads(thread
  * Print the progress table header
  */
 void Print_Progress::printTableHeader() {
-    std::string header = "|    id    |";
+    std::string header = "    |    id    |";
     int dash_count = 12;
     for (int i = 0; i < n_threads; i++) {
         if (i < 10) {
@@ -60,6 +60,7 @@ void Print_Progress::printTableHeader() {
         dash_count += 10;
     }
     std::cout << header << std::endl;
+    std::cout << "    ";
     for (int i = 0; i < dash_count; i++) {
         std::cout << "-";
     }
@@ -71,7 +72,7 @@ void Print_Progress::printTableHeader() {
  * Print the updated the progress line
  */
 void Print_Progress::printProgress(){
-    std::string progress_string = "\r| progress |";
+    std::string progress_string = "\r    | progress |";
     for (int i = 0; i < n_threads; i++) {
         progress_string += progress_increment[i] + "|";
     }
