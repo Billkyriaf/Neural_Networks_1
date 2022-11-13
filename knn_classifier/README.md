@@ -26,7 +26,7 @@
     - [4.1. `make` targets](#41-make-targets)
       - [Knn Classifier](#knn-classifier)
       - [K-means Classifier](#k-means-classifier)
-      - [K-means clustering Classifier](#k-means-clustering-classifier)
+      - [K-means Clustering Classifier](#k-means-clustering-classifier)
 
 ## 1. About This Project
 
@@ -70,10 +70,10 @@ $ cd knn_classifier
 In the knn_classifier directory you can find the Makefile that is used to build the executables.
 
 `IMPORTANT!` Before building the executables make sure that the MNIST dataset is in the `data` directory. If the dataset is not in the `data` directory you can download it from the [*official website*](http://yann.lecun.com/exdb/mnist/) and extract it in the `data` directory. The `data` directory should contain the following files: 
-- `train-images-idx3-ubyte`
-- `train-labels-idx1-ubyte`
-- `t10k-images-idx3-ubyte`
-- `t10k-labels-idx1-ubyte`
+- `train-images.idx3-ubyte`
+- `train-labels.idx1-ubyte`
+- `t10k-images.idx3-ubyte`
+- `t10k-labels.idx1-ubyte`
 
 #### 4.1. `make` targets
 
