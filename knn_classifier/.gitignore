@@ -1,5 +1,6 @@
 **/.idea/*
 **/cmake-build-debug/*
+**/make-build-debug-g/*
 **/data/*
 **/images/*
 **/pre_fit/*

@@ -13,5 +13,5 @@ add_executable(knn_classifier src/KNN_main.cpp src/mnist/MNIST_Image.cpp src/mni
 add_executable(nc_classifier src/NCC_main.cpp src/ncc/NCC.cpp src/ncc/NCC.h src/mnist/MNIST_Image.cpp
         src/mnist/MNIST_Image.h src/mnist/MNIST_Import.cpp src/mnist/MNIST_Import.h src/utils/Timer.cpp src/utils/Timer.h include/progressbar.h)
 
-add_executable(ncc_cluster src/NCC_Cluster_main.cpp src/ncc/NCC_clusters.cpp src/ncc/NCC_clusters.cpp src/mnist/MNIST_Image.cpp
+add_executable(ncc_cluster src/NCC_Cluster_main.cpp src/ncc_cluster/NCC_clusters.cpp src/ncc_cluster/NCC_clusters.cpp src/mnist/MNIST_Image.cpp
         src/mnist/MNIST_Image.h src/mnist/MNIST_Import.cpp src/mnist/MNIST_Import.h src/utils/Timer.cpp src/utils/Timer.h include/progressbar.h)
