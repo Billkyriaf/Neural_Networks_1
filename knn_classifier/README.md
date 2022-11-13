@@ -99,7 +99,7 @@ Arguments:
 #   -s <int>  : The starting index of the testing images (default: 0)
 ```
 
-To change the arguments edit the Makefile [here]().
+To change the arguments edit the Makefile [here](https://github.com/Billkyriaf/Neural_Networks_1/blob/39fde23404f6caea81df83d3e2f089cc17091f5a/knn_classifier/Makefile#L75).
 
 ##### K-means Classifier
 
@@ -120,7 +120,7 @@ Arguments:
 #   -s <int>  : The starting index of the testing images (default: 0)
 ```
 
-To change the arguments edit the Makefile [here]().
+To change the arguments edit the Makefile [here](https://github.com/Billkyriaf/Neural_Networks_1/blob/39fde23404f6caea81df83d3e2f089cc17091f5a/knn_classifier/Makefile#L85).
 
 ##### K-means Clustering Classifier
 
@@ -142,4 +142,4 @@ Arguments:
 #           the clusters from the previous runs. The first time the program must be run with the fit
 #           flag set. Every time the clusters are incremented the fit flag must be set.
 ```
-To change the arguments edit the Makefile [here]().
+To change the arguments edit the Makefile [here](https://github.com/Billkyriaf/Neural_Networks_1/blob/39fde23404f6caea81df83d3e2f089cc17091f5a/knn_classifier/Makefile#L95).
