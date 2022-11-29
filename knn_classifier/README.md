@@ -19,7 +19,7 @@
 - [2. Getting Started](#2-getting-started)
 - [3. Dependencies](#3-dependencies)
     - [3.1. Make](#31-make)
-    - [3.2. C++ 11 capable Compiler](#32-c-11-capable-compiler)
+    - [3.2. C++ 14 capable Compiler](#32-c-14-capable-compiler)
     - [3.3. progressbar Library](#33-progressbar-library)
     - [3.4. Mnist Dataset](#34-mnist-dataset)
 - [4. Usage](#4-usage)
@@ -47,7 +47,7 @@ Or alternatively [*download*](https://github.com/Billkyriaf/Neural_Networks_1/ar
 
 This project uses make utilities to build and run the executables.
 
-#### 3.2. C++ 11 capable Compiler
+#### 3.2. C++ 14 capable Compiler
 
 This project uses C++ 14 features and requires a compiler that supports C++ 14.
 
