@@ -1,56 +1,93 @@
-# Neural_Networks_1
+<div id="top"></div>
 
-## TODO list
+<br />
+<div align="center">
+  <h1 align="center">Neural Network MNIST Classifier</h1>
+  <h3 align="center">Aristotle University of Thessaloniki</h3>
+  <h4 align="center">School of Electrical & Computer Engineering</h4>
+  <p align="center">
+    Author: Kyriafinis Vasilis
+    <br />
+    Winter Semester 2022 - 2023
+    <br />
+    <br />
+  </p>
+</div>
 
-- [ ] Neuron class
-- [ ] Layer class
-- [ ] Activation functions
-- [ ] Back propagation algorithm
-- [ ] KNN algorithm and performance evaluation
-- [ ] Input data class
-- [ ] Data manipulation class
-  - [ ] Data normalization
-  - [ ] Data conversion from image to vector
-  - [ ] Image resize
-- [ ] Network initialization algorithm
+- [1. About This Project](#1-about-this-project)
+- [2. Getting Started](#2-getting-started)
+- [3. Dependencies](#3-dependencies)
+    - [3.1. Make](#31-make)
+    - [3.2. C++ 14 capable Compiler](#32-c-14-capable-compiler)
+    - [3.3. progressbar Library](#33-progressbar-library)
+    - [3.4. Mnist Dataset](#34-mnist-dataset)
+- [4. Usage](#4-usage)
+    - [4.1. `make` targets](#41-make-targets)
+      - [nn classifier](#nn-classifier)
 
-## Assignment
 
-Να γραφεί πρόγραμμα σε οποιαδήποτε γλώσσα προγραμματισμού το οποίο να υλοποιεί ένα ***νευρωνικό δίκτυο πολυστρωματικού perceptron*** (το δίκτυο μπορεί να είναι πλήρως συνδεδεμένο ή συνελικτικό ή συνδυασμός) που θα εκπαιδεύεται με τον αλγόριθμο ***back-propagation***. Το ΝΝ αυτό θα εκπαιδευτεί για να διαχωρίζει τα δεκαδικά ψηφία (0,1,...,9) ή εικόνες ή κείμενα ή να επιλύει οποιοδήποτε πρόβλημα κατηγοριοποίησης πολλών κλάσεων.
+## 1. About This Project
 
-### Βάση Δεδομένων
+The main point of focus of this project is to create a Neural Network and train it on a dataset. For the purposes of this assignment the MNIST data set was used.
 
-Για την εκπαίδευση και την κατηγοριοποίηση μπορεί να χρησιμοποιηθεί μία εκ των παρακάτω βάσεων
 
-Α. Η βάση δεδομένων Cifar-10 ή MNIST ή SVHN που υπάρχουν στις παρακάτω διευθύνσεις:
+## 2. Getting Started
 
-http://yann.lecun.com/exdb/mnist/
-https://www.cs.toronto.edu/~kriz/cifar.html
-http://ufldl.stanford.edu/housenumbers/
+To setup this repository on your local machine run the following command on the terminal:
 
-Β. Εναλλακτικά μπορεί να χρησιμοποιηθεί οποιαδήποτε από τις βάσεις δεδομένων που υπάρχουν στις ιστοσελίδες:
+```console
+$ git clone git@github.com:Billkyriaf/Neural_Networks_1.git
+```
 
-http://www.cs.toronto.edu/~roweis/data.html
-http://www.cs.cmu.edu/~cil/v-images.html
-https://www.kaggle.com/datasets
+Or alternatively [*download*](https://github.com/Billkyriaf/Neural_Networks_1/archive/refs/heads/main.zip) and extract the zip file of the repository.
 
-και αφορούν προβλήματα κατηγοριοποίησης πολλών κλάσεων. Όπου δεν υπάρχει σύνολο ελέγχου χωρίζεται η βάση τυχαία σε σύνολο εκπαίδευσης (60%) και ελέγχου (40%) ή ακολουθείται τεχνική cross-validation.
+## 3. Dependencies
+#### 3.1. Make
 
-### Εξαγωγή Χαρακτηριστικών
-Χρησιμοποιείται ολόκληρη η είσοδος ή επιλέγονται κατάλληλα χαρακτηριστικά για το διαχωρισμό των δειγμάτων ( π.χ. φωτεινότητες σε κατάλληλες θέσεις, μέση φωτεινότητα γραμμών-στηλών κλπ ) ή μειώνεται η διάσταση των δεδομένων χρησιμοποιώντας PCA.
+This project uses make utilities to build and run the executables.
 
-###Έκθεση αποτελεσμάτων
+#### 3.2. C++ 14 capable Compiler
 
-Θα πρέπει να γραφεί ***έκθεση*** στην οποία να περιγράφονται: ***ο αλγόριθμος***, να δίνονται χαρακτηριστικά ***παραδείγματα ορθής και εσφαλμένης κατηγοριοποίησης*** καθώς και ***ποσοστά επιτυχίας*** στα στάδια της εκπαίδευσης (training) και του ελέγχου (testing), ***χρόνος εκπαίδευσης*** και ***ποσοστά επιτυχίας για διαφορετικούς αριθμούς νευρώνων στο κρυφό επίπεδο***, διαφορετικές τιμές των παραμέτρων εκπαίδευσης. Να συγκριθεί η απόδοση του νευρωνικού σε σχέση με την κατηγοριοποίηση πλησιέστερου γείτονα (Nearest Neighbor) και πλησιέστερου κέντρου κλάσης (Nearest Class Centroid) της ενδιάμεσης εργασίας. Να σχολιασθούν τα αποτελέσματα και ο κώδικας.
+This project uses C++ 14 features and requires a compiler that supports C++ 14.
 
-**ΗΜΕΡΟΜΗΝΙΑ ΠΑΡΑΔΟΣΗΣ : 27η Νοεμβρίου 2022, ώρα 24:00**
+#### 3.3. progressbar Library
 
->Για κάθε ημέρα αργοπορημένης υποβολής της εργασίας και για 5 ημέρες μειώνεται η βαθμολογία κατά 10%. Μετά από την παράδοση όλων των εργασιών θα ακολουθήσει παρουσίαση και προφορική εξέταση πάνω στις εργασία, στην οποία θα περιλαμβάνεται και προφορική εξέταση του κώδικα.
+This project uses the ***progressbar*** library by **gipert** to display a progress bar during the execution of the program. The library is included in the repository and no additional setup is required. For more information about the library visit the [*github page*](https://github.com/gipert/progressbar).
 
-###Ενδιάμεση Εργασία
+#### 3.4. Mnist Dataset
 
-Να γραφεί πρόγραμμα σε οποιαδήποτε γλώσσα επιθυμείτε το οποίο να συγκρίνει την απόδοση του ***κατηγοριοποιητή πλησιέστερου γείτονα*** με 1 και 3 πλησιέστερους γείτονες με τον ***κατηγοριοποιητή πλησιέστερου κέντρου*** στην βάση δεδομένων που θα επιλέξετε για την εργασία σας. Το πρόγραμμα δηλαδή αυτό θα πρέπει να διαβάζει τα δεδομένα εκπαίδευσης (training) και τα δεδομένα ελέγχου (test) και να μετράει την απόδοση των παραπάνω κατηγοριοποιητών.
+The dataset used in this project is the Mnist dataset. The dataset is included in the repository and no additional setup is required.
 
-**ΗΜΕΡΟΜΗΝΙΑ ΠΑΡΑΔΟΣΗΣ : 13η Νοεμβρίου 2022, ώρα 24:00**
+## 4. Usage
 
-Εναλλακτικά μπορεί όποιος θέλει να χρησιμοποιήσει deep learning αρχιτεκτονική https://www.tensorflow.org/ https://pytorch.org/ https://keras.io/ με οποιοδήποτε τύπο δικτύου επιθυμεί.
+To build the executables from the root directory of the repository run the following command on the terminal:
+
+```console
+$ cd nn_project
+```
+
+In the nn_project directory you can find the Makefile that is used to build the executable.
+
+`IMPORTANT!` Before building the executables make sure that the MNIST dataset is in the `data` directory. If the dataset is not in the `data` directory you can download it from the [*official website*](http://yann.lecun.com/exdb/mnist/) and extract it in the `data` directory. The `data` directory should contain the following files: 
+- `train-images.idx3-ubyte`
+- `train-labels.idx1-ubyte`
+- `t10k-images.idx3-ubyte`
+- `t10k-labels.idx1-ubyte`
+
+#### 4.1. `make` targets
+
+The Makefile contains the following targets:
+
+##### nn classifier
+
+```console
+# nn classifier
+$ make run_nn  
+```
+Arguments:
+
+```console
+# The nn executable requires no arguments
+```
+
+To change the default parameters of the NN edit the main.cpp [here](https://github.com/Billkyriaf/Neural_Networks_1/blob/bfac419b352efc1cd2c4d8220ac97e489add608f/nn_project/src/main.cpp#L36).
