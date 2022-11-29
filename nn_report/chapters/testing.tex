@@ -1,0 +1,14 @@
+
+At this point the plan was to start testing different configurations for the network
+and see which one performs the best. Unfortunately, despite the fact that cade implements
+the algorithms exactly as they are described in the literature, the network does not perform
+as expected. The network, regardless of the configuration, achieves an accuracy of 10\% on
+the test set. This is the same as if the network randomly guesses the digit.
+
+The behavior of the network is that despite the fact that the weights are updated, the
+the accuracy stays the same. After many hours of debugging and trying to find the problem,
+I was unable to find the cause of the problem.
+
+In a nutshell, the learning rate was set from 0.00001 to 100 and it did not make any
+difference. Also, the batch size and number of epochs were changed and the accuracy stayed
+the same. Finally the number of layers also did not make any difference.

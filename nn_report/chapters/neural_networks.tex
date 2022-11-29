@@ -1,0 +1,435 @@
+\subsection{Neural Networks notation}
+
+Neural networks are total of neurons that are connected to each other. Each neuron has a set of inputs with the
+corresponding weights, a bias and an output. The way the neuron works is shown in the following equation:
+
+\begin{equation}
+    \label{eq:neuron}
+    a_i^l = f\left(\sum_{j=1}^{n_{l-1}} w_{ij}^l x_j^{l-1} + b_i^l\right)
+\end{equation}
+
+
+\noindent
+Where:
+
+\begin{itemize}
+    \item[-] $a_i^l$ is the output of the neuron $i$ in the layer $l$
+    \item[-] $f$ is the activation function
+    \item[-] $w_{ij}^l$ is the weight of the connection between the neuron $j$ in the layer $l-1$ and the 
+    neuron $i$ in the layer $l$
+    \item[-] $b_i^l$ is the bias of the neuron $i$ in the layer $l$
+\end{itemize}
+
+\noindent
+This is the notation that will be used throughout the rest of the document.
+
+\subsection{Network initialization}
+
+In order to start the training of the network, the weights and the biases must be initialized. This is a very 
+discussed topic in the field of neural networks. For this assignment, the weights will be initialized with one 
+of the following methods.
+
+\subsubsection{Xavier (Glorot) initialization}
+
+In 2010, Xavier Glorot and Yoshua Bengio authored a paper \cite{glorot} that proposed a new  method for 
+initializing the weights of a neural network. The method is based on a random normal distribution and on the
+number of neurons of the layers. The weights are initialized with the following equation:
+
+\begin{equation}
+    \label{eq:glorot}
+    w_{ij}^l \sim \mathcal{N}\left(0, \frac{2}{n_{l-1} + n_l}\right)
+\end{equation}
+
+\noindent
+Where:
+
+\begin{itemize}
+    \item[-] $n_{l-1}$ is the number of inputs of the neuron $i$ in the layer $l$
+    \item[-] $n_l$ is the number of neurons in the layer $l$
+\end{itemize}
+
+The Xavier initialization method is best used with the Sigmoid, Softmax and Tanh activation functions.
+
+
+\subsubsection{Kaiming He initialization}
+
+Glorot initialization is not a good choice for the ReLU activation function. In 2015, Kaiming He, Xiangyu Zhang,
+Shaoqing Ren and Jian Sun proposed a new initialization method \cite{he} that is better suited for the ReLU
+activation function. The weights are initialized with the following equation:
+
+\begin{equation}
+    \label{eq:he}
+    w_{ij}^l \sim \mathcal{N}\left(0, \frac{2}{n_{l-1}}\right)
+\end{equation}
+
+\noindent
+Where:
+
+\begin{itemize}
+    \item[-] $n_{l-1}$ is the number of inputs of the neuron $i$ in the layer $l$
+\end{itemize}
+
+The Kaiming He initialization method is best used with the ReLU activation function.
+
+\subsubsection{Zero initialization}
+
+For testing purposes, instead of initializing the weights with a random distribution, they can be initialized
+with zeros.
+
+\subsubsection{Bias initialization}
+
+The biases are not as important as the weights. Many methods suggest that the biases can be initialized with
+a small constant value. For this assignment though, the biases will be initialized to 0.
+
+\subsection{Activation functions}
+
+The activation function is a function that is applied to the weighted sum of the inputs to obtain the output of
+a neuron. There are many activation functions that can be used in a neural network. For this assignment, the
+following activation functions will be implemented.
+
+\subsubsection{Sigmoid}
+
+\noindent
+The sigmoid activation function is defined as:
+
+\begin{equation}
+    \label{eq:sigmoid}
+    f(z) = \frac{1}{1 + e^{-z}}
+\end{equation}
+
+\begin{center}
+    \begin{figure}[ht]
+        \begin{tikzpicture}
+            \begin{axis}[
+                title style={at={(0.5,0)},anchor=north,yshift=-45pt},
+                title = {},
+                axis y line*=center,
+                axis x line*=bottom,
+                ymin=0, ymax=1,
+                ytick={0.25, 0.5, 0.75, 1},
+                xmin=-7, xmax=7,
+                xtick={-6, -4, -2, 0, 2, 4, 6},
+                width = \textwidth,
+                height = 0.4\textwidth,
+                legend style={draw=none}
+            ]
+                \addplot[
+                    red,%
+                    mark=none,
+                    samples=50,
+                    domain=-7:7,
+                ] (x,{1/(1+exp(-x))});
+            \end{axis}
+        \end{tikzpicture}
+        \caption{Sigmoid function}
+    \end{figure}
+\end{center}
+
+The derivative of the sigmoid function is will also be needed for the backpropagation algorithm. The derivative
+of the function is defined as:
+
+\begin{equation}
+    \label{eq:sigmoid_derivative}
+    f'(z) = f(z) \cdot (1 - f(z))
+\end{equation}
+
+\subsubsection{ReLU}
+
+\noindent
+The ReLU activation function is defined as:
+
+\begin{equation}
+    \label{eq:relu}
+    f(z) = \max(0, z)
+\end{equation}
+
+\begin{center}
+    \begin{figure}[ht]
+        \begin{tikzpicture}
+            \begin{axis}[
+                title style={at={(0.5,0)},anchor=north,yshift=-45pt},
+                title = {},
+                axis y line*=center,
+                axis x line*=bottom,
+                ymin=0, ymax=4,
+                ytick={1, 2, 3, 4},
+                xmin=-7, xmax=7,
+                xtick={-6, -4, -2, 0, 2, 4, 6},
+                width = \textwidth,
+                height = 0.4\textwidth,
+                legend style={draw=none}
+            ]
+                \addplot[
+                    red,%
+                    mark=none,
+                    samples=50,
+                    domain=-4:4,
+                ] (x,{max(0,x)});
+            \end{axis}
+        \end{tikzpicture}
+        \caption{ReLU function}
+    \end{figure}
+\end{center}
+
+The derivative of the ReLU function is will also be needed for the backpropagation algorithm. The derivative
+of the function is defined as:
+
+\begin{equation}
+    \label{eq:relu_derivative}
+    f'(z) = \begin{cases}
+        0 & \text{if } z < 0 \\
+        1 & \text{if } z \geq 0
+    \end{cases}
+\end{equation}
+
+\subsubsection{Softmax}
+\noindent
+The softmax activation function is defined as:
+
+\begin{equation}
+    \label{eq:softmax}
+    f(z) = \frac{e^{z_i}}{\sum_{j=1}^n e^{z_j}}
+\end{equation}
+
+\noindent
+Where:
+
+\begin{itemize}
+    \item[-] $z_i$ is the weighted sum of the inputs of the neuron $i$
+    \item[-] $n$ is the number of neurons in the layer
+\end{itemize}
+
+Softmax is a special activation function that is used in the output layer of a neural network. It is used for
+classification problems. The output of the softmax activation function is a probability distribution. The
+probability of a class is the value of the output of the neuron that represents that class.
+
+The derivative of the softmax function is will also be needed for the backpropagation algorithm. The derivative
+of the function is defined as:
+
+\begin{equation}
+    \label{eq:softmax_derivative}
+    \frac {df(z_i)}{dz_j} = \begin{cases}
+        f(z_i) \cdot (1 - f(z_i)) & \text{if } i = j \\
+        -f(z_i) \cdot f(z_j) & \text{if } i \neq j
+    \end{cases}
+\end{equation}
+
+\subsection{Training}
+
+After the network is initialized, the training can begin. The training is done by using the backpropagation
+algorithm along the MSE (Mean Square Error) function. But before that the forward pass must be done.
+
+\subsubsection{Forward pass}
+
+The forward pass is the process of calculating the output of the network. The output of the network is the
+prediction of the network. The forward pass is done by calculating the weighted sum of the inputs of each
+neuron and applying the activation function to the weighted sum. The output of the activation function is
+the input of the next layer. The forward pass is done for each layer of the network. The output of the last
+layer is the output of the network.
+
+Passing a single image through the network and then calling the backpropagation algorithm is not very efficient.
+For this reason the training images are divided into batches. The forward pass is done for each batch. After 
+every image the errors are calculated but the weights are updated at the end of the batch.
+
+\subsubsection{Backpropagation}
+
+The backpropagation algorithm is used to update the weights of the network. After an image is passed through
+the network, an output is obtained. The output is compared to the expected output and the error is calculated.
+The error function is the MSE function. The MSE function is defined as:
+
+\begin{equation}
+    \label{eq:mse}
+    E = \frac{1}{2} \sum_{i=1}^n (y_i - t_i)^2
+\end{equation}
+
+\noindent
+Where:
+
+\begin{itemize}
+    \item[-] $y_i$ is the output of the neuron $i$
+    \item[-] $t_i$ is the expected output of the neuron $i$
+    \item[-] $n$ is the number of neurons in the output layer
+\end{itemize}
+
+The goal of the backpropagation algorithm is to change the weights of the network in such a way that the error
+is minimized. To do this, the gradient of the error function with respect to all the weights and biases must
+be calculated. 
+
+\subsubsection{Output layer}
+
+The target is to calculate the partial derivatives of the error function with respect to the weights and biases.
+
+\begin{equation}
+    \label{eq:patrials}
+    \frac{\partial E_i}{\partial w_{ij}},\ \frac{\partial E_i}{\partial b_i}
+\end{equation}
+
+Using the chain rule, the partial derivatives of the error function with respect to the weights and biases equals
+
+\begin{equation}
+    \begin{split}
+        \label{eq:chainrule}
+        \frac{\partial E_i}{\partial w_{ij}} & = \frac{\partial E_i}{\partial a_i} \frac{\partial a_i}{\partial z_{i}} \frac{\partial z_{i}}{\partial w_{ij}} \\
+        \frac{\partial E_i}{\partial b_i} & = \frac{\partial E_i}{\partial a_i} \frac{\partial a_i}{\partial z_{i}} \frac{\partial z_i}{\partial b_i}
+    \end{split}
+\end{equation}
+
+\noindent
+Where:
+
+\begin{itemize}
+    \item[-] $a_i$ is the output of the neuron $i$
+    \item[-] $z_i$ is the weighted sum of the inputs of the neuron $i$ 
+    \item[-] $w_{ij}$ is the weight between the neuron $i$ and the neuron $j$ of the previous layer
+    \item[-] $b_i$ is the bias of the neuron $i$
+\end{itemize}
+
+\noindent
+As a reminder:
+\begin{equation}
+        a_i^l = f(z_i^l)
+\end{equation}
+
+\noindent
+and
+
+\begin{equation}
+    z_i^l =  \sum {(a_j^{(l-1)}\cdot wij)} + b_i^l 
+\end{equation}
+
+The partial derivative of the error function with respect to the output of the neuron is calculated as:
+
+\begin{equation}
+    \label{eq:partialinput}
+    \frac{\partial E_i}{\partial a_i} = a_i - t_i
+\end{equation}
+
+The partial derivative of the output of the neuron with respect to the weighted sum $z_i$ is simply the derivatives
+of the activation function: 
+
+\begin{equation}
+    \label{eq:partialweightedsum}
+    \frac{\partial a_i}{\partial z_{i}} = f'(z_i)
+\end{equation}
+
+Finally the partial derivative of the weighted sum with respect to the weight $w_{ij}$ is simply the output of the
+previous neuron $a_j^{l-1}$:
+
+\begin{equation}
+    \label{eq:partialweight}
+    \frac{\partial z_i}{\partial w_{ij}} = a_j^{(l-1)}
+\end{equation}
+
+and the partial derivative of the weighted sum with respect to the bias $b_i$ is simply 1:
+
+\begin{equation}
+    \label{eq:partialbias}
+    \frac{\partial z_i}{\partial b_i} = 1
+\end{equation}
+
+From the equations \ref{eq:chainrule} and equations \ref{eq:partialinput}, \ref{eq:partialweightedsum} we can identify 
+a common "error" term:
+
+\begin{equation}
+    \label{eq:errorterm}
+    \delta_i^l =  \frac{\partial E_i}{\partial a_i} \frac{\partial a_i}{\partial z_{i}} = (a_i - t_i) \cdot f'(z_i)
+\end{equation}
+
+The $\delta_i$ term can be calculated for each neuron in the output layer. After that using this term the gradient of the
+error function with respect to the weights and biases can be calculated as follows:
+
+\begin{equation}
+    \label{eq:gradient}
+    \begin{split}
+        \frac{\partial E_i}{\partial w_{ij}} & = \delta_i^l \cdot a_j^{(l-1)} \\
+        \frac{\partial E_i}{\partial b_i} & = \delta_i^l
+    \end{split}
+\end{equation}
+
+\subsubsection{Hidden layers}
+
+The equation \ref{eq:gradient} stands for all the layers of the network. The only thing missing is the calculation of the
+$\delta_i$ term for the hidden layers. The $\delta_i$ term for the hidden layers is backpropagated as follows:
+
+\begin{equation}
+    \label{eq:backpropagation}
+    \delta_i^{(l)} = \sum_{j=1}^{n} \delta_j^{(l+1)} \cdot w_{ij}^{(l+1)} \cdot f'(z_i^{l})
+\end{equation}
+
+\noindent
+Where:
+
+\begin{itemize}
+    \item[-] $\delta_j^{(l+1)}$ is the error term of the neuron $j$ of the next layer
+    \item[-] $w_{ij}^{(l+1)}$ is the weight between the neuron $i$ of the layer $l$ and the neuron $j$ of the next layer
+\end{itemize}
+
+It is easily seen that the $\delta^l$ is dependent on the $\delta$ and the weights of the next layer. This means that It
+can be calculated as long as the $\delta$ and the weights of the next layer are known. Since the $\delta$ and the weights
+of the output layer are known, the $\delta$ term for all the layers of the network can be calculated.
+
+\subsubsection{Weight and bias update}
+
+Once the gradient of the error function with respect to the weights and biases is calculated, the weights and biases
+can be updated as follows:
+
+\begin{equation}
+    \label{eq:weightupdate}
+    w_{ij}^{(l)} = w_{ij}^{(l)} - \eta \cdot \frac{\partial E_i}{\partial w_{ij}}
+\end{equation}
+
+\begin{equation}
+    \label{eq:biasupdate}
+    b_i^{(l)} = b_i^{(l)} - \eta \cdot \frac{\partial E_i}{\partial b_i}
+\end{equation}
+
+\noindent
+Where:
+
+\begin{itemize}
+    \item[-] $\eta$ is the learning rate
+\end{itemize}
+
+In practice the gradient of the weights and biases is averaged for each training example in a single batch. So the update
+equations are:
+
+\begin{equation}
+    \label{eq:weightupdatebatch}
+    w_{ij}^{(l)} = w_{ij}^{(l)} - \eta \cdot \frac{1}{m} \sum_{k=1}^{m} \frac{\partial E_i^{(k)}}{\partial w_{ij}}
+\end{equation}
+
+\begin{equation}
+    \label{eq:biasupdatebatch}
+    b_i^{(l)} = b_i^{(l)} - \eta \cdot \frac{1}{m} \sum_{k=1}^{m} \frac{\partial E_i^{(k)}}{\partial b_i}
+\end{equation}
+
+\noindent
+Where:
+
+\begin{itemize}
+    \item[-] $m$ is the number of training examples in the batch
+\end{itemize}
+
+\subsection{Training in practice}
+
+\noindent
+The steps to train the network in practice are the following:
+
+\begin{enumerate}
+    \item Create the batch of training samples by randomly selecting images
+    
+    For each image in the batch:
+    
+    \begin{itemize}
+        \item[-] Calculate the output of the network by propagating the input through the network
+        \item[-] Calculate the $\delta$ error term of the output layer using equation \ref{eq:errorterm}
+        \item[-] Backpropagate the error term to calculate the error term of the hidden layers using equation 
+        \ref{eq:backpropagation}
+        \item[-] Calculate the gradients all the weights and biases using equation \ref{eq:gradient} and add them to the
+        respecting average gradient sum
+    \end{itemize}
+
+    \item Update the weights and biases using equation \ref{eq:weightupdatebatch} and \ref{eq:biasupdatebatch}
+    \item Repeat the steps 1-2 for the next batch
+    
+\end{enumerate}

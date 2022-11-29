@@ -1,0 +1,20 @@
+\subsection{Objective}
+
+This assignment will implement the algorithms found in those libraries in C++ to the best ability of the author. The goal is to
+create a flexible framework that can be used to create and train neural networks. The neural networks will be fully connected. 
+The framework will be able to create and train neural networks with any number of layers and any number of neurons per layer.
+Also there will be the ability to choose the activation function for each layer and the initialization method for the weights.
+
+\subsection{Methodology}
+\subsubsection{Fully connected neural networks}
+
+Fully connected neural networks are networks where each neuron in one layer is connected to every neuron in the next layer. Every
+layer has a predetermined number of neurons. The first layer is the input layer and the last layer is the output layer. The input
+layer in this project will be 748 neurons, one for each pixel in the MNIST dataset. The output layer will be 10 neurons, one for
+each digit.
+
+\subsubsection{Network evaluation}
+Once the network is created, the weights are initialized and the training begins. In order to determine the optimal parameters 
+for the network, such as the learning rate, the number of epochs, the number of neurons per layer, the activation function and the
+initialization method, the network will be trained with different combinations of these parameters. The performance of the network
+will be measured by the accuracy of the network on the test set.
