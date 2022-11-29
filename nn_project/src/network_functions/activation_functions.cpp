@@ -36,10 +36,36 @@ void ReLU(double &output, std::vector<double *> &inputs, std::vector<double> &we
     output = std::max(0.0, sum);
 }
 
+/**
+ * Softmax activation function. The function gets the weighted sum of each perceptron in the layer and returns the
+ * softmax of each perceptron
+ *
+ * @param weighted_sums   The weighted sums of all the perceptrons in the layer
+ * @param index           The index of the current perceptron in the layer
+ *
+ * @return                Output of the perceptron
+ */
+std::vector<double> Softmax(std::vector<double *> &weighted_sums){
+    std::vector<double> outputs;
+    double sum = 0;
+    for (auto & weighted_sum : weighted_sums) {
+        sum += exp(*weighted_sum);
+    }
+
+    for (auto & weighted_sum : weighted_sums) {
+        outputs.push_back(exp(*weighted_sum) / sum);
+    }
+    return outputs;
+}
+
 double SigmoidDerivative(double output) {
     return output * (1 - output);
 }
 
 double ReLUDerivative(double output) {
     return output > 0 ? 1 : 0;
+}
+
+double SoftmaxDerivative(double output) {
+    return output * (1 - output);
 }

@@ -31,14 +31,18 @@ int main() {
     mnist.readTestData(test_images);  // Read the test data
 
     // Create the network
-    std::vector<int> layers = {784, 16, 16, 10};
-    Network network(int(layers.size()), 0.002, 50, layers, "ReLU", "Xavier", training_images, test_images);
 
-//    network.printNetwork();
+    // The network must have 784 input neurons and 10 output neurons. The hidden layers can be any number of neurons.
+    std::vector<int> layers = {784, 256, 16, 10};
 
-    network.trainNetwork();
+    double l_rate = 0.001;  // The learning rate
+    int epochs = 20;        // The number of epochs to train the network
 
-    network.testNetwork();
+    Network network(int(layers.size()), l_rate, epochs, layers, "Sigmoid", "Xavier", training_images, test_images);
+
+    network.printNetwork();  // Print information about the network
+
+    network.trainNetwork();  // Train the network. Testing is done automatically during training
 
     return 0;
 }

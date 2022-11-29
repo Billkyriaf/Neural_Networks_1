@@ -19,44 +19,14 @@ void XavierInitialization(std::vector<std::vector<Perceptron *>> &network){
 
     for (auto & layer : network) {
         for (auto & perceptron : layer) {
-            // Uniform distribution
-            std::uniform_real_distribution<> dis(-1.0 / perceptron->getNInputs() , 1.0 / perceptron->getNInputs());
 
-            // Set the weights to the generated values and the bias to 0
-            for (int k = 0; k < perceptron->getNInputs(); ++k) {
-                perceptron->setWeight(dis(gen), k);
-                perceptron->setBias(0);
-            }
-        }
-    }
-}
+            // Normal distribution
+            int fan_in = perceptron->getNInputs();
+            int fan_out = int(layer.size());
 
+            double fan_avg = (fan_in + fan_out) / 2.0;
 
-/**
- * Xavier normal initialization of the weights. It is a good initialization for the sigmoid activation functions.
- *
- * @param network   Network to initialize
- */
-void NormalizedXavierInitialization(std::vector<std::vector<Perceptron *>> &network){
-    std::random_device rd;  // Will be used to obtain a seed for the random number engine
-    std::mt19937 gen(rd());  // Standard mersenne_twister_engine seeded with rd()
-
-    for (auto i = 0; i < network.size(); ++i) {
-        auto& layer = network[i];
-        int next_layer_size = 0;
-
-        // Get the next layer size
-        if (i + 1 < network.size()) {
-            next_layer_size = int(network[i + 1].size());
-        } else {
-            next_layer_size = 1;
-        }
-
-        // Initialize the weights
-        for (auto & perceptron : layer) {
-            // Uniform distribution
-            std::uniform_real_distribution<> dis(-sqrt(6) / (perceptron->getNInputs() + next_layer_size) ,
-                                                 sqrt(6) / (perceptron->getNInputs() + next_layer_size));
+            std::normal_distribution<> dis(0, sqrt(1.0 / fan_avg));
 
             // Set the weights to the generated values and the bias to 0
             for (int k = 0; k < perceptron->getNInputs(); ++k) {

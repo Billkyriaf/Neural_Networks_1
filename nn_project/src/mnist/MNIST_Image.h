@@ -37,7 +37,7 @@ public:
     void setNormalizedPixels(std::array<double, MNIST_IMAGE_SIZE> set_pixels);
 
     // Functions
-    void saveImage(const ::std::string &name) const;
+    void saveImage(const ::std::string &name, int max) const;
     bool isLabel(uint8_t l) const;
 
 private:

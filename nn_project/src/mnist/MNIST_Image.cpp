@@ -113,7 +113,7 @@ void MNIST_Image::setPixels(std::array<uint8_t, MNIST_IMAGE_SIZE> p) {
  *
  * @param name   The name of the file to save the image to
  */
-void MNIST_Image::saveImage(const std::string &name) const{
+void MNIST_Image::saveImage(const std::string &name, int max) const{
     using ::std::string;
     using ::std::ios;
     using ::std::ofstream;
@@ -133,17 +133,30 @@ void MNIST_Image::saveImage(const std::string &name) const{
     ofstream out(as_pgm(name), ios::binary | ios::out | ios::trunc);
 
     // Write the header
-    out << "P2\n28 28\n255\n";
+    out << "P2\n28 28\n" << max << "\n";
 
-    // Write the pixels
-    for (int x = 0; x < 28; ++x) {
-        for (int y = 0; y < 28; ++y) {
-            auto pixel_val = (unsigned char)pixels[x * 28 + y];
-            out << (unsigned int)pixel_val;
-            out << " ";
+    if (max == 255){
+        // Write the pixels
+        for (int x = 0; x < 28; ++x) {
+            for (int y = 0; y < 28; ++y) {
+                auto pixel_val = (unsigned char)pixels[x * 28 + y];
+                out << (unsigned int)pixel_val;
+                out << " ";
+            }
+            out << "\n";
         }
-        out << "\n";
+    } else {
+        // Write the pixels
+        for (int x = 0; x < 28; ++x) {
+            for (int y = 0; y < 28; ++y) {
+                auto pixel_val = (double)normalized_pixels[x * 28 + y];
+                out << (double)pixel_val;
+                out << " ";
+            }
+            out << "\n";
+        }
     }
+
 
     // Close the file
     out.close();

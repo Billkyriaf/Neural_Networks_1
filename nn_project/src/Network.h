@@ -1,32 +1,32 @@
 #ifndef NN_PROJECT_NETWORK_H
 #define NN_PROJECT_NETWORK_H
 
-
 #include <vector>
+
 #include "mnist/MNIST_Image.h"
 #include "perceptrons/Perceptron.h"
 
+// TODO : Add performance metrics
+
 class Network {
 public:
+    // Constructors
     Network()= delete;
-    ~Network();
-
     Network (int n_layers, double l_rate, int epochs, std::vector<int>& n_perceptrons,
              const std::string& activation_function, const std::string& initialization_function,
              std::vector<MNIST_Image *>& training_set, std::vector<MNIST_Image *>& test_set);
 
+    // Destructor
+    ~Network();
+
     // Getters
-    int getNLayers() const;
-    std::vector<int> getLayersSizes() const;
-    std::vector<double *> getOutputs() const;
 
     // Setters
 
     // Functions
-    void printNetwork() const;
     void trainNetwork();
     void testNetwork();
-
+    void printNetwork() const;
 
 private:
     std::vector<MNIST_Image *> training_images {};   // Training images
@@ -52,8 +52,8 @@ private:
 
     // Functions
     void initializeNetwork(std::vector<int>& n_perceptrons);
-    void setInputs(MNIST_Image *image);
-    void backpropagation();
+    void inputImage(MNIST_Image *image);
+    void backPropagate();
 };
 
 
